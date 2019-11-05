@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  
+  <url>
+    <loc>https://junjiayy.github.io/posts/configure-nginx-https-certificate.html</loc>
+    
+    <lastmod>2019-09-20T10:38:00.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://junjiayy.github.io/posts/science-online.html</loc>
+    
+    <lastmod>2019-09-18T15:50:38.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://junjiayy.github.io/tags/index.html</loc>
+    
+    <lastmod>2019-07-15T08:28:03.687Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://junjiayy.github.io/posts/hexo-install.html</loc>
+    
+    <lastmod>2019-07-15T04:59:00.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://junjiayy.github.io/posts/laravel-modify-time-field.html</loc>
+    
+    <lastmod>2019-07-11T09:35:43.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://junjiayy.github.io/posts/nginx-logs.html</loc>
+    
+    <lastmod>2019-07-01T15:32:51.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://junjiayy.github.io/posts/hello-world.html</loc>
+    
+    <lastmod>2019-07-01T06:32:51.000Z</lastmod>
+    
+  </url>
+  
+</urlset>
