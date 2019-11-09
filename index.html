@@ -265,6 +265,137 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://junjiayy.github.io/posts/golang-hot-reload.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Reliy">
+      <meta itemprop="description" content="A computer rookie blog that records something that he thinks is worthy of being recorded. It may be life, it may be work, or it may be a bug! ! !">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Road to growth of rookie">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/posts/golang-hot-reload.html" itemprop="url">Golang 进程热重启</a></h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-11-05T18:21:03+08:00">
+                2019-11-05 18:21
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p>There are only 10 kinds of people in the world, one is a person who understands binary, and the other is a person who does not understand binary.</p>
+<p>代码需要升级; 配置文件需要更新. 如果在 <code>PHP</code> 中这些都很简单, 一个简单的 <code>vim</code> 或 <code>git pull</code> 就能解决. 可是像 <code>Golang</code> 这样的静态语言就无法做到像 <code>PHP</code> 中的那么灵活. 在线上的生产环境, 我们必须保证新老服务无缝交替. 如果贸然停掉服务, 就可能造成一些问题; 例如:</p>
+<ul>
+<li>旧的请求未完成, 服务端进程直接退出, 会造成客户端链接中断</li>
+<li>新的请求发送过来, 服务端还未完成重启, 造成 <code>connection refused</code></li>
+<li>旧的请求未处理完成, 服务端进程直接退出, 可能会造成用户数据不对称(即: 用户已完成一部分操作, 还要一部分未完成)</li>
+</ul>
+<p>当然; 这些问题都可以通过其他方法去规避. 例如使用负载均衡(如: <code>nginx</code>), 保证在升级的过程中始终有一个服务可用, 即各服务器依次灰度升级. 但是像 <code>nginx -s reload</code> 这种的方式, 好像更加方便</p>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/posts/golang-hot-reload.html#more" rel="contents">
+              Read more &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="https://junjiayy.github.io/posts/configure-nginx-https-certificate.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1063,7 +1194,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-count">7</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
