@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="Nginx,Linux,">
+  <meta name="keywords" content="golang,">
 
 
 
@@ -79,20 +79,18 @@
 
 
 
-<meta name="description" content="对于 web 服务器来说, 日志是不可缺少的一部分, 对于服务器排错、统计都很有用。nginx 的日志主要分为两种: access_log (访问日志) 和 error_log (错误日志)。通过访问日志我们可以获取到用户的 IP 地址、浏览器信息、请求处理时间等信息，而请求处理时间对于程序员来说是一个及其重要的东西, 毕竟它可以看出来你的代码烂不烂。错误日志记录了访问日志出错的信息, 可以帮我们">
-<meta name="keywords" content="Nginx,Linux">
+<meta name="description" content="对称加密作为最快速、最简单的加密方式, 所以被广泛的使用在很多加密协议的核心中. 但是对称加密也有一个致命的弱点, 那就是对称加密算法在加密和解密是需要使用到同一个 密钥; 当 A 和 B 两个人在需要进行加密数据的传输时, 如果他们使用的是对称加密算法, 那么必须有一端将 密钥 发送给另外一端. 在不安全的网络传输中这一点就是相当危险! 密钥 一旦被窃或拦截, 那么之前所做的加密就相当于已经失效">
+<meta name="keywords" content="golang">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Nginx logs">
-<meta property="og:url" content="https://junjiayy.github.io/posts/nginx-logs.html">
+<meta property="og:title" content="RSA 非对称加密">
+<meta property="og:url" content="https://junjiayy.github.io/posts/rsa-asymmetric-encryption.html">
 <meta property="og:site_name" content="Road to growth of rookie">
-<meta property="og:description" content="对于 web 服务器来说, 日志是不可缺少的一部分, 对于服务器排错、统计都很有用。nginx 的日志主要分为两种: access_log (访问日志) 和 error_log (错误日志)。通过访问日志我们可以获取到用户的 IP 地址、浏览器信息、请求处理时间等信息，而请求处理时间对于程序员来说是一个及其重要的东西, 毕竟它可以看出来你的代码烂不烂。错误日志记录了访问日志出错的信息, 可以帮我们">
+<meta property="og:description" content="对称加密作为最快速、最简单的加密方式, 所以被广泛的使用在很多加密协议的核心中. 但是对称加密也有一个致命的弱点, 那就是对称加密算法在加密和解密是需要使用到同一个 密钥; 当 A 和 B 两个人在需要进行加密数据的传输时, 如果他们使用的是对称加密算法, 那么必须有一端将 密钥 发送给另外一端. 在不安全的网络传输中这一点就是相当危险! 密钥 一旦被窃或拦截, 那么之前所做的加密就相当于已经失效">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https://junjiayy.github.io/images/nginx-desc-page.jpg">
-<meta property="og:updated_time" content="2019-07-01T15:32:51.000Z">
+<meta property="og:updated_time" content="2020-02-17T04:54:24.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Nginx logs">
-<meta name="twitter:description" content="对于 web 服务器来说, 日志是不可缺少的一部分, 对于服务器排错、统计都很有用。nginx 的日志主要分为两种: access_log (访问日志) 和 error_log (错误日志)。通过访问日志我们可以获取到用户的 IP 地址、浏览器信息、请求处理时间等信息，而请求处理时间对于程序员来说是一个及其重要的东西, 毕竟它可以看出来你的代码烂不烂。错误日志记录了访问日志出错的信息, 可以帮我们">
-<meta name="twitter:image" content="https://junjiayy.github.io/images/nginx-desc-page.jpg">
+<meta name="twitter:title" content="RSA 非对称加密">
+<meta name="twitter:description" content="对称加密作为最快速、最简单的加密方式, 所以被广泛的使用在很多加密协议的核心中. 但是对称加密也有一个致命的弱点, 那就是对称加密算法在加密和解密是需要使用到同一个 密钥; 当 A 和 B 两个人在需要进行加密数据的传输时, 如果他们使用的是对称加密算法, 那么必须有一端将 密钥 发送给另外一端. 在不安全的网络传输中这一点就是相当危险! 密钥 一旦被窃或拦截, 那么之前所做的加密就相当于已经失效">
 
 
 
@@ -122,13 +120,13 @@
 
 
 
-  <link rel="canonical" href="https://junjiayy.github.io/posts/nginx-logs.html">
+  <link rel="canonical" href="https://junjiayy.github.io/posts/rsa-asymmetric-encryption.html">
 
 
 
 
 
-  <title>Nginx logs | Road to growth of rookie</title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  <title>RSA 非对称加密 | Road to growth of rookie</title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
   
 
 
@@ -267,7 +265,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://junjiayy.github.io/posts/nginx-logs.html">
+    <link itemprop="mainEntityOfPage" href="https://junjiayy.github.io/posts/rsa-asymmetric-encryption.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Reliy">
@@ -284,7 +282,7 @@
 
         
         
-          <h2 class="post-title" itemprop="name headline">Nginx logs</h2>
+          <h2 class="post-title" itemprop="name headline">RSA 非对称加密</h2>
         
 
         <div class="post-meta">
@@ -296,8 +294,8 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-07-01T23:32:51+08:00">
-                2019-07-01 23:32
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-02-17T12:54:24+08:00">
+                2020-02-17 12:54
               </time>
             
 
@@ -312,8 +310,8 @@
               
                 <span class="post-meta-item-text">Post modified&#58;</span>
               
-              <time title="Post modified" itemprop="dateModified" datetime="2019-07-01T23:32:51+08:00">
-                2019-07-01 23:32
+              <time title="Post modified" itemprop="dateModified" datetime="2020-02-17T12:54:24+08:00">
+                2020-02-17 12:54
               </time>
             
           </span>
@@ -346,147 +344,19 @@
       
 
       
-        <p>对于 <code>web</code> 服务器来说, 日志是不可缺少的一部分, 对于服务器排错、统计都很有用。<code>nginx</code> 的日志主要分为两种: <code>access_log</code> (访问日志) 和 <code>error_log</code> (错误日志)。通过访问日志我们可以获取到用户的 <code>IP</code> 地址、浏览器信息、请求处理时间等信息，而请求处理时间对于程序员来说是一个及其重要的东西, 毕竟它可以看出来你的代码烂不烂。错误日志记录了访问日志出错的信息, 可以帮我们快速定位错误的位置、原因等重要因素</p>
-<p><img src="/images/nginx-desc-page.jpg" alt="image"></p>
+        <p>对称加密作为最快速、最简单的加密方式, 所以被广泛的使用在很多加密协议的核心中. 但是对称加密也有一个致命的弱点, 那就是对称加密算法在加密和解密是需要使用到同一个 <strong>密钥</strong>; 当 A 和 B 两个人在需要进行加密数据的传输时, 如果他们使用的是对称加密算法, 那么必须有一端将 <strong>密钥</strong> 发送给另外一端. 在不安全的网络传输中这一点就是相当危险! <strong>密钥</strong> 一旦被窃或拦截, 那么之前所做的加密就相当于已经失效.</p>
+<p>1976 年, 美国学者 Dime 和 Henman 为了解决信息公开传送和秘钥管理问题, 提出一种新的密钥交换协议, 允许在不安全媒体上的通信双方交换数据, 安全的达成一致的密钥, 这种密钥交换协议就被称为 “<strong>公开密钥密码学</strong> (<strong>Public-key cryptography</strong>)”. 相对于 <strong>对称加密算法</strong> 这种方法也被叫做 <strong>非对称加密算法</strong>. </p>
+<p>非对称加密算法之所以可以规避对称加密的致命缺点, 就是因为非对称加密使用的是 <strong>一对</strong> 密钥, 而不是像对称加密一样使用 <strong>一个</strong> 密钥; 非对称加密的秘钥分为两个: 一个是公钥 (public key); 另一个则是私钥 (private key). 私钥只由安全的一方保管, 不能外泄; 公钥则可以发给任何请求它的人. 非对称加密算法在加密时可以使用两个密钥中的任何一个, 但是在解密时则需要另外一个密钥才能解密. 比如: 使用公钥加密就需要私钥才能解密、使用私钥加密就需要公钥才能解密. </p>
 <a id="more"></a>
-<h4 id="nginx-错误日志信息介绍"><a href="#nginx-错误日志信息介绍" class="headerlink" title="nginx 错误日志信息介绍"></a><code>nginx</code> 错误日志信息介绍</h4><p>配置记录 <code>nginx</code> 的错误信息是调试 <code>nginx</code> 服务的重要手段,属于核心功能模块 <code>ngx_core_module</code> 的参数,该参数名为 <code>error_log</code> ,可以放在 <code>Main</code> 区块中作为全局配置,也可以单独放在不同的虚拟主机中单独记录<br><br><code>error_log</code> 的语法格式及参数说明如下:<br></p>
-<div class="table-container">
-<table>
-<thead>
-<tr>
-<th>error_log</th>
-<th>file_path</th>
-<th>level</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>关键字</td>
-<td>日志文件路径</td>
-<td>错误级别</td>
-</tr>
-</tbody>
-</table>
-</div>
-<p>其中,关键字 <code>error_log</code> 不能改变,日志文件路径可以指定任意存放日志的目录,错误级别常见的有 <code>[debug|info|notice|warn|error|crit|alert|emerg]</code> ,级别越高纪录的信息越少,生产环境一般是 <code>[warn|error|crit]</code> 这三个级别之一</p>
+<h4 id="RSA-非对称加密算法"><a href="#RSA-非对称加密算法" class="headerlink" title="RSA 非对称加密算法"></a>RSA 非对称加密算法</h4><p>非对称加密的主要算法有: RSA、Elgamal、背包算法、Rabin、D-H、ECC (椭圆曲线加密算法),  其中 RSA 是被最广泛使用的一种非对称加密算法. RSA 是 1977 年由 <a href="https://zh.wikipedia.org/wiki/%E7%BD%97%E7%BA%B3%E5%BE%B7%C2%B7%E6%9D%8E%E7%BB%B4%E6%96%AF%E7%89%B9" target="_blank" rel="noopener">Ronald Linn Rivest</a>、<a href="https://zh.wikipedia.org/wiki/%E9%98%BF%E8%BF%AA%C2%B7%E8%90%A8%E8%8E%AB%E5%B0%94" target="_blank" rel="noopener">Adi Shamir</a>、<a href="https://zh.wikipedia.org/wiki/%E4%BC%A6%E7%BA%B3%E5%BE%B7%C2%B7%E9%98%BF%E5%BE%B7%E6%9B%BC" target="_blank" rel="noopener">Leonard Max Adleman</a> 三个人一起提出, RSA 就是他们三个人的姓氏首字母拼在一起组成的</p>
 <blockquote>
-<p>注意:尽量不要配置 <code>info</code> 等较低级别的错误级别,这样会带来大量的 <code>I/O</code> 消耗</p>
+<p>RSA 跟对称加密比较, 更加复杂, 且更加消耗资源. 但是相对来说他的安全程度也更高; 到目前为止, 世界上还没有任何可靠的能够攻击 RSA 算法的方式. 只要其密钥长度足够长, 用 RSA 加密的数据实际上是不能破解的</p>
 </blockquote>
-<p><code>error_log</code> 的默认值为:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">default: error_log logs/error.log error;</span><br></pre></td></tr></table></figure></p>
-<p>可以放置的标签段为<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">context: main; http; server; location</span><br></pre></td></tr></table></figure></p>
-<h4 id="nginx-访问日志介绍"><a href="#nginx-访问日志介绍" class="headerlink" title="nginx 访问日志介绍"></a><code>nginx</code> 访问日志介绍</h4><p><code>nginx</code> 会把每个用户访问网站的日志信息记录到自定的日志文件中,供网站提供者分析用户的浏览行为等。客户端向 <code>nginx</code> 服务器发起的每一次请求都会记录到访问日志中,客户端IP，浏览器信息, <code>referer</code>, 请求处理时间, 请求URL等都可以在访问日志中得到。当然具体要记录哪些信息，你可以通过 <code>log_format</code> 指令定义。此功能由 <code>ngx_http_log_module</code> 模块负责</p>
-<p><code>nginx</code> 访问日志语法:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">access_log path [format [buffer=size] [gzip[=level]] [flush=time] [if=condition]];</span><br></pre></td></tr></table></figure></p>
-<div class="table-container">
-<table>
-<thead>
-<tr>
-<th>参数</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>path</td>
-<td>指定日志的存放位置</td>
-</tr>
-<tr>
-<td>format</td>
-<td>用来定义记录日志的格式(可以定义多种日志格式,取不同的名字即可)</td>
-</tr>
-<tr>
-<td>access_log</td>
-<td>用来自定日志文件的路径及使用何种日志格式记录日志</td>
-</tr>
-<tr>
-<td>buffer</td>
-<td>用来指定日志写入时的缓存大小。默认是64k</td>
-</tr>
-<tr>
-<td>gzip</td>
-<td>日志写入前先进行压缩。压缩率可以指定，从1到9数值越大压缩比越高，同时压缩的速度也越慢。默认是1</td>
-</tr>
-<tr>
-<td>flush</td>
-<td>设置缓存的有效时间。如果超过flush指定的时间，缓存中的内容将被清空</td>
-</tr>
-<tr>
-<td>if</td>
-<td>条件判断。如果指定的条件计算为0或空字符串，那么该请求不会写入日志</td>
-</tr>
-</tbody>
-</table>
-</div>
-<blockquote>
-<p>一般场景中,这些参数都不用配置,极端优化时才可能会考虑这些参数</p>
-<p><code>access_log off</code> 中的 <code>off</code> ,表示不记录访问日志</p>
-</blockquote>
-<h5 id="使用-log-format-自定义访问日志格式"><a href="#使用-log-format-自定义访问日志格式" class="headerlink" title="使用 log_format 自定义访问日志格式"></a>使用 <code>log_format</code> 自定义访问日志格式</h5><p>日志格式定义说明</p>
-<p>定义语法<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">log_format name [escape=default|json] string ...;</span><br></pre></td></tr></table></figure></p>
-<p>如下例:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">access_log /var/logs/nginx-access.log main</span><br><span class="line">log_format main &apos;$remote_addr - $remote_user [$time_local] &quot;$request&quot; &apos;</span><br><span class="line">                &apos;$status $body_bytes_sent &quot;$http_referer&quot; &apos;</span><br><span class="line">                &apos;&quot;$http_user_agent&quot; &quot;$http_x_frowarded_for&quot;&apos;</span><br></pre></td></tr></table></figure></p>
-<p>其中, <code>log_format</code> 为日志格式关键参数,不能随意改变。<br><code>main</code> 是为日志格式指定的标签,记录日志时会通过这个 <code>main</code> 标签选择指定的格式。标签后面跟着的都是可以记录的日志信息。</p>
-<p>具体日志参数信息如下:</p>
-<div class="table-container">
-<table>
-<thead>
-<tr>
-<th>nginx 日志变量</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>$remote_addr</td>
-<td>记录访问网站的客户端IP地址</td>
-</tr>
-<tr>
-<td>$http_x_forwarded_for</td>
-<td>当前端游代理服务器时,是指 Web 节点记录客户端地址的配置,此参数生效的前提是代理服务器上也进行了相关的 x_forwarded_for 设置</td>
-</tr>
-<tr>
-<td>$remote_user</td>
-<td>远程客户端名称</td>
-</tr>
-<tr>
-<td>$time_local</td>
-<td>记录访问时间与时区</td>
-</tr>
-<tr>
-<td>$request</td>
-<td>用户的 http 请求起始行信息</td>
-</tr>
-<tr>
-<td>$status</td>
-<td>http 状态码,记录请求返回的状态,例如:200、404、301 等</td>
-</tr>
-<tr>
-<td>$body_bytes_sents</td>
-<td>服务器发送给客户端的响应的 body 字节数</td>
-</tr>
-<tr>
-<td>$http_referer</td>
-<td>记录此次请求是从哪个链接访问过来的,可以根据 referer 进行防盗链设置</td>
-</tr>
-<tr>
-<td>$http_user_agent</td>
-<td>记录客户端访问信息,例如:浏览器、手机客户端等</td>
-</tr>
-</tbody>
-</table>
-</div>
-<blockquote>
-<p>所有的日志段以空格分割,一行可以记录多个</p>
-<p>在没有特殊要求的情况下,采用默认配置即可,更多可以设置的目录日志信息的变量见 <a href="http://nginx.org/en/docs/http/ngx_http_log_module.html" target="_blank" rel="noopener">nginx日志变量</a></p>
-</blockquote>
-<p>访问日志可以放置的标签段为<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">context: http; server; location; if in location; limit_except</span><br></pre></td></tr></table></figure></p>
-<p><a href="http://nginx.org/en/docs/http/ngx_http_log_module.html" target="_blank" rel="noopener">更多内容参考 nginx 官方网站</a></p>
-<h4 id="nginx-日志切割"><a href="#nginx-日志切割" class="headerlink" title="nginx 日志切割"></a><code>nginx</code> 日志切割</h4><p>默认情况下 <code>nginx</code> 会把所有的访问日志生成到一个指定的访问日志文件 <code>access.log</code> 中,但这样一来,时间长了就导致日志文件内容过大,不利于日志的分析或处理,因此,一般做法会将 <code>nginx</code> 的访问日志按天或按小时进行分割,分成不同的文件保存。</p>
-<p>新建一个 <code>shell</code> 脚本 <code>cut_nginx_log.sh</code>,内容如下</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">!/bin/sh</span></span><br><span class="line">DateFormat=`date +%Y%m%d`</span><br><span class="line">LogDir="/application/nginx/logs"</span><br><span class="line">LogName="access_default";</span><br><span class="line">[ -d $LogDir ] &amp;&amp; cd $LogDir || exit 1</span><br><span class="line">[ -f $&#123;LogName&#125;.log ] || exit 1</span><br><span class="line">/bin/mv $&#123;LogName&#125;.log $&#123;DateFormat&#125;_$&#123;LogName&#125;.log</span><br><span class="line">/bin/touch $&#123;LogName&#125;.log</span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>脚本实现切割 <code>nginx</code> 日志的思想,是将正在写入的 <code>nginx</code> 日志 <code>access_defalut</code> 修改为带日期的的格式文件 <code>xxx_xx_xx_access_default</code>, 然后新建一个 <code>access_default</code> 文件</p>
-</blockquote>
-<p>通过定时任务的方式实现每日 00 点整定时执行 <code>cut_nginx_log.sh</code> 切割日志,将以下内容写入到 <code>/var/spool/cron/root</code> 中<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">#每日0点切割nginx日志 \</span><br><span class="line">00 00 * * * /bin/sh script_path/cut_nginx_log.sh &gt; /dev/null 2&gt;&amp;1</span><br></pre></td></tr></table></figure></p>
-<p>查看 <code>crontab</code> 是否添加成功<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ crontab -l</span><br><span class="line"></span><br><span class="line">#每日0点切割nginx日志 \</span><br><span class="line">00 00 * * * /bin/sh script_path/cut_nginx_log.sh &gt; /dev/null 2&gt;&amp;1</span><br></pre></td></tr></table></figure></p>
+<h5 id="ASN-1"><a href="#ASN-1" class="headerlink" title="ASN.1"></a>ASN.1</h5><p>在电信和计算机网络领域, ASN.1 (Abstract Syntax Notation One) 是一套标准, 是描述数据的表示、编码、传输、解码的灵活的记法. 它提供了一套正式、无歧义和精确的规则以描述独立于特定计算机硬件的对象结构. 标准的 ASN.1 编码规则有: 基本编码规则 (Basic Encoding Rules) 简称 BER、规范编码规则 (Canonical Encoding Rules) 简称 CER、唯一编码规则 (Distinguished Encoding Rules) 简称 DER、压缩编码规则 (Packed Encoding Rules) 简称 PER 和 XML编码规则 (XML Encoding Rules) 简称 XER. <a href="https://zh.wikipedia.org/wiki/ASN.1" target="_blank" rel="noopener">参考资料</a></p>
+<h5 id="X-509-数字证书标准"><a href="#X-509-数字证书标准" class="headerlink" title="X.509 数字证书标准"></a>X.509 数字证书标准</h5><p>X.509 是密码学里公钥证书的格式标准. X.509 证书已应用在包括 TLS/SSL 在内的众多网络协议里, 同时它也用在很多非在线应用场景里, 比如电子签名服务. X.509 证书里含有公钥、身份信息 (比如网络主机名，组织的名称或个体名称等) 和签名信息 (可以是证书签发机构CA的签名，也可以是自签名). 对于一份经由可信的证书签发机构签名或者可以通过其它方式验证的证书, 证书的拥有者就可以用证书及相应的私钥来创建安全的通信, 对文档进行数字签名. X.509 证书的结构是由 ASN.1 进行描述, 并使用 ASN.1 DER 编码规则编码</p>
+<h6 id="golang-实现-RSA-密钥对生成"><a href="#golang-实现-RSA-密钥对生成" class="headerlink" title="golang 实现 RSA 密钥对生成"></a>golang 实现 RSA 密钥对生成</h6><figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"crypto/rand"</span></span><br><span class="line">	<span class="string">"crypto/rsa"</span></span><br><span class="line">	<span class="string">"crypto/x509"</span></span><br><span class="line">	<span class="string">"encoding/pem"</span></span><br><span class="line">	<span class="string">"fmt"</span></span><br><span class="line">	<span class="string">"os"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">generatePrinAndPubKeys</span><span class="params">(size <span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">	pri, err := rsa.GenerateKey(rand.Reader, size)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(fmt.Sprintf(<span class="string">"generate rsa keys fail: %s"</span>, err))</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	derTx := x509.MarshalPKCS1PrivateKey(pri)</span><br><span class="line">	block := pem.Block&#123;Type: <span class="string">"RSA PRIVATE KEY"</span>, Bytes: derTx&#125;</span><br><span class="line">	file, err := os.Create(<span class="string">"private.pem"</span>)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(fmt.Sprintf(<span class="string">"create file fail: %s"</span>, err))</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">defer</span> file.Close()</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> err := pem.Encode(file, &amp;block); err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(fmt.Sprintf(<span class="string">"private key input file fail: %s"</span>, err))</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	derstream, err := x509.MarshalPKIXPublicKey(&amp;pri.PublicKey)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(fmt.Sprintf(<span class="string">"marshal public key fail: %s"</span>, err))</span><br><span class="line">	&#125;</span><br><span class="line">	block = pem.Block&#123;Type: <span class="string">"RSA PUBLIC KEY"</span>, Bytes: derstream&#125;</span><br><span class="line">	pubFile, err := os.Create(<span class="string">"public.pem"</span>)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(fmt.Sprintf(<span class="string">"create file fail: %s"</span>, err))</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">defer</span> pubFile.Close()</span><br><span class="line">	<span class="keyword">if</span> err := pem.Encode(pubFile, &amp;block); err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(fmt.Sprintf(<span class="string">"private key input file fail: %s"</span>, err))</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	generatePrinAndPubKeys(<span class="number">1024</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h6 id="golang-实现-rsa-加解密"><a href="#golang-实现-rsa-加解密" class="headerlink" title="golang 实现 rsa 加解密"></a>golang 实现 rsa 加解密</h6><figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"crypto/rand"</span></span><br><span class="line">	<span class="string">"crypto/rsa"</span></span><br><span class="line">	<span class="string">"crypto/x509"</span></span><br><span class="line">	<span class="string">"encoding/base64"</span></span><br><span class="line">	<span class="string">"encoding/pem"</span></span><br><span class="line">	<span class="string">"fmt"</span></span><br><span class="line">	<span class="string">"io/ioutil"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">publicKeyEncrypt</span><span class="params">(plainText []<span class="keyword">byte</span>, keyFile <span class="keyword">string</span>)</span> []<span class="title">byte</span></span> &#123;</span><br><span class="line">	content, err := ioutil.ReadFile(keyFile)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(fmt.Sprintf(<span class="string">"read public key file fail: %s"</span>, err))</span><br><span class="line">	&#125;</span><br><span class="line">	block, _ := pem.Decode(content)</span><br><span class="line">	pubInterface, err := x509.ParsePKIXPublicKey(block.Bytes)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(fmt.Sprintf(<span class="string">"parse public key fail: %s"</span>, err))</span><br><span class="line">	&#125;</span><br><span class="line">	pubKey := pubInterface.(*rsa.PublicKey)</span><br><span class="line">	cipherTxt, err := rsa.EncryptPKCS1v15(rand.Reader, pubKey, plainText)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(fmt.Sprintf(<span class="string">"encrypt plain fail: %s"</span>, err))</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> cipherTxt</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">privateKeyDecrypt</span><span class="params">(cipherTxt []<span class="keyword">byte</span>, keyFile <span class="keyword">string</span>)</span> []<span class="title">byte</span></span> &#123;</span><br><span class="line">	content, err := ioutil.ReadFile(keyFile)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(fmt.Sprintf(<span class="string">"read private key file fail: %s"</span>, err))</span><br><span class="line">	&#125;</span><br><span class="line">	block, _ := pem.Decode(content)</span><br><span class="line">	priKey, err := x509.ParsePKCS1PrivateKey(block.Bytes)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(fmt.Sprintf(<span class="string">"parse private key fail: %s"</span>, err))</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	plainTxt, err := rsa.DecryptPKCS1v15(rand.Reader, priKey, cipherTxt)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(fmt.Sprintf(<span class="string">"decrypt cipher fail: %s"</span>, err))</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> plainTxt</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span>  &#123;</span><br><span class="line">	txt := <span class="string">"this is testing text"</span></span><br><span class="line">	cipher := publicKeyEncrypt([]<span class="keyword">byte</span>(txt), <span class="string">"/Users/reliy/go/project/src/study/public.pem"</span>)</span><br><span class="line">	fmt.Printf(<span class="string">"%v\n"</span>, base64.StdEncoding.EncodeToString(cipher))</span><br><span class="line">	fmt.Printf(<span class="string">"%s\n"</span>, <span class="keyword">string</span>(privateKeyDecrypt(cipher, <span class="string">"/Users/reliy/go/project/src/study/private.pem"</span>)))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="参考和引用"><a href="#参考和引用" class="headerlink" title="参考和引用"></a>参考和引用</h4><p><a href="https://zh.wikipedia.org/wiki/%E5%85%AC%E9%92%A5%E5%AF%86%E7%A0%81%E5%AD%A6%E6%A0%87%E5%87%86" target="_blank" rel="noopener">公钥密码学标准</a><br><a href="https://zh.wikipedia.org/wiki/X.509" target="_blank" rel="noopener">X.509</a><br><a href="https://zh.wikipedia.org/wiki/ASN.1" target="_blank" rel="noopener">ASN.1</a><br><a href="https://zh.wikipedia.org/wiki/RSA%E5%8A%A0%E5%AF%86%E6%BC%94%E7%AE%97%E6%B3%95" target="_blank" rel="noopener">RSA加密算法</a><br><a href="https://zh.wikipedia.org/wiki/%E5%85%AC%E5%BC%80%E5%AF%86%E9%92%A5%E5%8A%A0%E5%AF%86" target="_blank" rel="noopener">公开密钥加密</a></p>
 
       
     </div>
@@ -504,9 +374,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/Nginx/" rel="tag"># Nginx</a>
-          
-            <a href="/tags/Linux/" rel="tag"># Linux</a>
+            <a href="/tags/golang/" rel="tag"># golang</a>
           
         </div>
       
@@ -519,8 +387,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/posts/hello-world.html" rel="next" title="Hello World">
-                <i class="fa fa-chevron-left"></i> Hello World
+              <a href="/posts/DES/AES 对称加密.html" rel="next" title="DES/AES 对称加密">
+                <i class="fa fa-chevron-left"></i> DES/AES 对称加密
               </a>
             
           </div>
@@ -528,10 +396,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/posts/laravel-modify-time-field.html" rel="prev" title="Laravel(Lumen) 5.X 修改时间字段为 INT 类型">
-                Laravel(Lumen) 5.X 修改时间字段为 INT 类型 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -689,7 +553,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#nginx-错误日志信息介绍"><span class="nav-number">1.</span> <span class="nav-text">nginx 错误日志信息介绍</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#nginx-访问日志介绍"><span class="nav-number">2.</span> <span class="nav-text">nginx 访问日志介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#使用-log-format-自定义访问日志格式"><span class="nav-number">2.1.</span> <span class="nav-text">使用 log_format 自定义访问日志格式</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#nginx-日志切割"><span class="nav-number">3.</span> <span class="nav-text">nginx 日志切割</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#RSA-非对称加密算法"><span class="nav-number">1.</span> <span class="nav-text">RSA 非对称加密算法</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#ASN-1"><span class="nav-number">1.1.</span> <span class="nav-text">ASN.1</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#X-509-数字证书标准"><span class="nav-number">1.2.</span> <span class="nav-text">X.509 数字证书标准</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#golang-实现-RSA-密钥对生成"><span class="nav-number">1.2.1.</span> <span class="nav-text">golang 实现 RSA 密钥对生成</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#golang-实现-rsa-加解密"><span class="nav-number">1.2.2.</span> <span class="nav-text">golang 实现 rsa 加解密</span></a></li></ol></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#参考和引用"><span class="nav-number">2.</span> <span class="nav-text">参考和引用</span></a></li></ol></div>
             
 
           </div>

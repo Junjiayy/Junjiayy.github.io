@@ -265,6 +265,132 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://junjiayy.github.io/posts/rsa-asymmetric-encryption.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Reliy">
+      <meta itemprop="description" content="A computer rookie blog that records something that he thinks is worthy of being recorded. It may be life, it may be work, or it may be a bug! ! !">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Road to growth of rookie">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/posts/rsa-asymmetric-encryption.html" itemprop="url">RSA 非对称加密</a></h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-02-17T12:54:24+08:00">
+                2020-02-17 12:54
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p>对称加密作为最快速、最简单的加密方式, 所以被广泛的使用在很多加密协议的核心中. 但是对称加密也有一个致命的弱点, 那就是对称加密算法在加密和解密是需要使用到同一个 <strong>密钥</strong>; 当 A 和 B 两个人在需要进行加密数据的传输时, 如果他们使用的是对称加密算法, 那么必须有一端将 <strong>密钥</strong> 发送给另外一端. 在不安全的网络传输中这一点就是相当危险! <strong>密钥</strong> 一旦被窃或拦截, 那么之前所做的加密就相当于已经失效.</p>
+<p>1976 年, 美国学者 Dime 和 Henman 为了解决信息公开传送和秘钥管理问题, 提出一种新的密钥交换协议, 允许在不安全媒体上的通信双方交换数据, 安全的达成一致的密钥, 这种密钥交换协议就被称为 “<strong>公开密钥密码学</strong> (<strong>Public-key cryptography</strong>)”. 相对于 <strong>对称加密算法</strong> 这种方法也被叫做 <strong>非对称加密算法</strong>. </p>
+<p>非对称加密算法之所以可以规避对称加密的致命缺点, 就是因为非对称加密使用的是 <strong>一对</strong> 密钥, 而不是像对称加密一样使用 <strong>一个</strong> 密钥; 非对称加密的秘钥分为两个: 一个是公钥 (public key); 另一个则是私钥 (private key). 私钥只由安全的一方保管, 不能外泄; 公钥则可以发给任何请求它的人. 非对称加密算法在加密时可以使用两个密钥中的任何一个, 但是在解密时则需要另外一个密钥才能解密. 比如: 使用公钥加密就需要私钥才能解密、使用私钥加密就需要公钥才能解密. </p>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/posts/rsa-asymmetric-encryption.html#more" rel="contents">
+              Read more &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="https://junjiayy.github.io/posts/DES/AES 对称加密.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1318,7 +1444,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-count">9</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
