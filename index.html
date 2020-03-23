@@ -265,6 +265,132 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://junjiayy.github.io/posts/fastdfs-install-and-basics.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Reliy">
+      <meta itemprop="description" content="A computer rookie blog that records something that he thinks is worthy of being recorded. It may be life, it may be work, or it may be a bug! ! !">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Road to growth of rookie">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/posts/fastdfs-install-and-basics.html" itemprop="url">FastDFS 安装和入门</a></h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-03-23T13:11:00+08:00">
+                2020-03-23 13:11
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p>在传统的项目中计算机通过文件系统存储数据. 而现在各种微服务、负载均衡横行的时代, 文件会被多台服务器访问, 造成数据文件不能被存储在本地文件系统中. </p>
+<p>传统的解决方法一般会有一台专门存储文件的服务器, 业务服务器的文件存储会通过 ftp 或 ssh 的方式上传到文件服务上. 这种方式被称为 <strong>网络文件系统</strong> 即 NFS (Network File System), 但是 NFS 在使用中也存在: 大量的访问磁盘IO、存在单点故障、存储空间不足等缺点</p>
+<p>为了解决 NFS 的缺点 <strong>分布式文件系统</strong> 即 DFS (Distributed File System) 应运而生. 分布式文件系统可以有效的解决数据的存储和管理难题; DFS 将固定某一地点的某个文件系统, 扩展到任意多个地点/多个文件系统, 众多节点组成一个文件系统网络. 每个节点可以分布在不同的地点, 通过网络进行节点间的通信和数据传输. 在使用分布式文件系统时, 无需关心数据是存储在哪个节点上、或者是从哪个节点从获取的, 只需要像使用本地文件系统一样管理和存储文件系统中的数据.</p>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/posts/fastdfs-install-and-basics.html#more" rel="contents">
+              Read more &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="https://junjiayy.github.io/posts/rsa-asymmetric-encryption.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1444,7 +1570,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">9</span>
+                  <span class="site-state-item-count">10</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
@@ -1457,7 +1583,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-count">12</span>
                   <span class="site-state-item-name">tags</span>
                 </a>
               </div>

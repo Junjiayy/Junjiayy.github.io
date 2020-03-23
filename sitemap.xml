@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://junjiayy.github.io/posts/fastdfs-install-and-basics.html</loc>
+    
+    <lastmod>2020-03-23T05:11:00.000Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://junjiayy.github.io/posts/rsa-asymmetric-encryption.html</loc>
     
     <lastmod>2020-02-19T05:15:29.000Z</lastmod>

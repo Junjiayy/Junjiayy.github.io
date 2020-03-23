@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="Linux,Nginx,">
+  <meta name="keywords" content="Linux,FastDFS,">
 
 
 
@@ -79,20 +79,18 @@
 
 
 
-<meta name="description" content="对于 web 服务器来说, 日志是不可缺少的一部分, 对于服务器排错、统计都很有用。nginx 的日志主要分为两种: access_log (访问日志) 和 error_log (错误日志)。通过访问日志我们可以获取到用户的 IP 地址、浏览器信息、请求处理时间等信息，而请求处理时间对于程序员来说是一个及其重要的东西, 毕竟它可以看出来你的代码烂不烂。错误日志记录了访问日志出错的信息, 可以帮我们">
-<meta name="keywords" content="Linux,Nginx">
+<meta name="description" content="在传统的项目中计算机通过文件系统存储数据. 而现在各种微服务、负载均衡横行的时代, 文件会被多台服务器访问, 造成数据文件不能被存储在本地文件系统中.  传统的解决方法一般会有一台专门存储文件的服务器, 业务服务器的文件存储会通过 ftp 或 ssh 的方式上传到文件服务上. 这种方式被称为 网络文件系统 即 NFS (Network File System), 但是 NFS 在使用中也存在: 大">
+<meta name="keywords" content="Linux,FastDFS">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Nginx logs">
-<meta property="og:url" content="https://junjiayy.github.io/posts/nginx-logs.html">
+<meta property="og:title" content="FastDFS 安装和入门">
+<meta property="og:url" content="https://junjiayy.github.io/posts/fastdfs-install-and-basics.html">
 <meta property="og:site_name" content="Road to growth of rookie">
-<meta property="og:description" content="对于 web 服务器来说, 日志是不可缺少的一部分, 对于服务器排错、统计都很有用。nginx 的日志主要分为两种: access_log (访问日志) 和 error_log (错误日志)。通过访问日志我们可以获取到用户的 IP 地址、浏览器信息、请求处理时间等信息，而请求处理时间对于程序员来说是一个及其重要的东西, 毕竟它可以看出来你的代码烂不烂。错误日志记录了访问日志出错的信息, 可以帮我们">
+<meta property="og:description" content="在传统的项目中计算机通过文件系统存储数据. 而现在各种微服务、负载均衡横行的时代, 文件会被多台服务器访问, 造成数据文件不能被存储在本地文件系统中.  传统的解决方法一般会有一台专门存储文件的服务器, 业务服务器的文件存储会通过 ftp 或 ssh 的方式上传到文件服务上. 这种方式被称为 网络文件系统 即 NFS (Network File System), 但是 NFS 在使用中也存在: 大">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https://junjiayy.github.io/images/nginx-desc-page.jpg">
-<meta property="og:updated_time" content="2019-07-01T15:32:51.000Z">
+<meta property="og:updated_time" content="2020-03-23T05:11:00.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Nginx logs">
-<meta name="twitter:description" content="对于 web 服务器来说, 日志是不可缺少的一部分, 对于服务器排错、统计都很有用。nginx 的日志主要分为两种: access_log (访问日志) 和 error_log (错误日志)。通过访问日志我们可以获取到用户的 IP 地址、浏览器信息、请求处理时间等信息，而请求处理时间对于程序员来说是一个及其重要的东西, 毕竟它可以看出来你的代码烂不烂。错误日志记录了访问日志出错的信息, 可以帮我们">
-<meta name="twitter:image" content="https://junjiayy.github.io/images/nginx-desc-page.jpg">
+<meta name="twitter:title" content="FastDFS 安装和入门">
+<meta name="twitter:description" content="在传统的项目中计算机通过文件系统存储数据. 而现在各种微服务、负载均衡横行的时代, 文件会被多台服务器访问, 造成数据文件不能被存储在本地文件系统中.  传统的解决方法一般会有一台专门存储文件的服务器, 业务服务器的文件存储会通过 ftp 或 ssh 的方式上传到文件服务上. 这种方式被称为 网络文件系统 即 NFS (Network File System), 但是 NFS 在使用中也存在: 大">
 
 
 
@@ -122,13 +120,13 @@
 
 
 
-  <link rel="canonical" href="https://junjiayy.github.io/posts/nginx-logs.html">
+  <link rel="canonical" href="https://junjiayy.github.io/posts/fastdfs-install-and-basics.html">
 
 
 
 
 
-  <title>Nginx logs | Road to growth of rookie</title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  <title>FastDFS 安装和入门 | Road to growth of rookie</title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
   
 
 
@@ -267,7 +265,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://junjiayy.github.io/posts/nginx-logs.html">
+    <link itemprop="mainEntityOfPage" href="https://junjiayy.github.io/posts/fastdfs-install-and-basics.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Reliy">
@@ -284,7 +282,7 @@
 
         
         
-          <h2 class="post-title" itemprop="name headline">Nginx logs</h2>
+          <h2 class="post-title" itemprop="name headline">FastDFS 安装和入门</h2>
         
 
         <div class="post-meta">
@@ -296,8 +294,8 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-07-01T23:32:51+08:00">
-                2019-07-01 23:32
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-03-23T13:11:00+08:00">
+                2020-03-23 13:11
               </time>
             
 
@@ -312,8 +310,8 @@
               
                 <span class="post-meta-item-text">Post modified&#58;</span>
               
-              <time title="Post modified" itemprop="dateModified" datetime="2019-07-01T23:32:51+08:00">
-                2019-07-01 23:32
+              <time title="Post modified" itemprop="dateModified" datetime="2020-03-23T13:11:00+08:00">
+                2020-03-23 13:11
               </time>
             
           </span>
@@ -346,147 +344,64 @@
       
 
       
-        <p>对于 <code>web</code> 服务器来说, 日志是不可缺少的一部分, 对于服务器排错、统计都很有用。<code>nginx</code> 的日志主要分为两种: <code>access_log</code> (访问日志) 和 <code>error_log</code> (错误日志)。通过访问日志我们可以获取到用户的 <code>IP</code> 地址、浏览器信息、请求处理时间等信息，而请求处理时间对于程序员来说是一个及其重要的东西, 毕竟它可以看出来你的代码烂不烂。错误日志记录了访问日志出错的信息, 可以帮我们快速定位错误的位置、原因等重要因素</p>
-<p><img src="/images/nginx-desc-page.jpg" alt="image"></p>
+        <p>在传统的项目中计算机通过文件系统存储数据. 而现在各种微服务、负载均衡横行的时代, 文件会被多台服务器访问, 造成数据文件不能被存储在本地文件系统中. </p>
+<p>传统的解决方法一般会有一台专门存储文件的服务器, 业务服务器的文件存储会通过 ftp 或 ssh 的方式上传到文件服务上. 这种方式被称为 <strong>网络文件系统</strong> 即 NFS (Network File System), 但是 NFS 在使用中也存在: 大量的访问磁盘IO、存在单点故障、存储空间不足等缺点</p>
+<p>为了解决 NFS 的缺点 <strong>分布式文件系统</strong> 即 DFS (Distributed File System) 应运而生. 分布式文件系统可以有效的解决数据的存储和管理难题; DFS 将固定某一地点的某个文件系统, 扩展到任意多个地点/多个文件系统, 众多节点组成一个文件系统网络. 每个节点可以分布在不同的地点, 通过网络进行节点间的通信和数据传输. 在使用分布式文件系统时, 无需关心数据是存储在哪个节点上、或者是从哪个节点从获取的, 只需要像使用本地文件系统一样管理和存储文件系统中的数据.</p>
 <a id="more"></a>
-<h4 id="nginx-错误日志信息介绍"><a href="#nginx-错误日志信息介绍" class="headerlink" title="nginx 错误日志信息介绍"></a><code>nginx</code> 错误日志信息介绍</h4><p>配置记录 <code>nginx</code> 的错误信息是调试 <code>nginx</code> 服务的重要手段,属于核心功能模块 <code>ngx_core_module</code> 的参数,该参数名为 <code>error_log</code> ,可以放在 <code>Main</code> 区块中作为全局配置,也可以单独放在不同的虚拟主机中单独记录<br><br><code>error_log</code> 的语法格式及参数说明如下:<br></p>
-<div class="table-container">
-<table>
-<thead>
-<tr>
-<th>error_log</th>
-<th>file_path</th>
-<th>level</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>关键字</td>
-<td>日志文件路径</td>
-<td>错误级别</td>
-</tr>
-</tbody>
-</table>
-</div>
-<p>其中,关键字 <code>error_log</code> 不能改变,日志文件路径可以指定任意存放日志的目录,错误级别常见的有 <code>[debug|info|notice|warn|error|crit|alert|emerg]</code> ,级别越高纪录的信息越少,生产环境一般是 <code>[warn|error|crit]</code> 这三个级别之一</p>
+<h4 id="FastDFS"><a href="#FastDFS" class="headerlink" title="FastDFS"></a>FastDFS</h4><p>FastDFS 是一个由国人使用纯 C 开发的轻量级分布式文件系统, 在国内被广泛使用且有着良好的社区环境; 功能包括: 文件存储、文件同步、文件访问 (上传和下载) 等, 解决了大容量存储和负载均衡的问题特别适合已文件未载体的在线服务, FastDFS 针对小文件 (4KB &lt; file_size &lt;500MB) 存储更有优势. 除了 FastDFS 常用的分布式文件系统还有 MooseFS、GlusterFS、Ceph、MogileFS、TFS 等.</p>
 <blockquote>
-<p>注意:尽量不要配置 <code>info</code> 等较低级别的错误级别,这样会带来大量的 <code>I/O</code> 消耗</p>
+<p>目标环境: Ubuntu 16.04; 系统内核: 4.15.0-45-generic FastDFS: server v6.06</p>
 </blockquote>
-<p><code>error_log</code> 的默认值为:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">default: error_log logs/error.log error;</span><br></pre></td></tr></table></figure></p>
-<p>可以放置的标签段为<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">context: main; http; server; location</span><br></pre></td></tr></table></figure></p>
-<h4 id="nginx-访问日志介绍"><a href="#nginx-访问日志介绍" class="headerlink" title="nginx 访问日志介绍"></a><code>nginx</code> 访问日志介绍</h4><p><code>nginx</code> 会把每个用户访问网站的日志信息记录到自定的日志文件中,供网站提供者分析用户的浏览行为等。客户端向 <code>nginx</code> 服务器发起的每一次请求都会记录到访问日志中,客户端IP，浏览器信息, <code>referer</code>, 请求处理时间, 请求URL等都可以在访问日志中得到。当然具体要记录哪些信息，你可以通过 <code>log_format</code> 指令定义。此功能由 <code>ngx_http_log_module</code> 模块负责</p>
-<p><code>nginx</code> 访问日志语法:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">access_log path [format [buffer=size] [gzip[=level]] [flush=time] [if=condition]];</span><br></pre></td></tr></table></figure></p>
-<div class="table-container">
-<table>
-<thead>
-<tr>
-<th>参数</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>path</td>
-<td>指定日志的存放位置</td>
-</tr>
-<tr>
-<td>format</td>
-<td>用来定义记录日志的格式(可以定义多种日志格式,取不同的名字即可)</td>
-</tr>
-<tr>
-<td>access_log</td>
-<td>用来自定日志文件的路径及使用何种日志格式记录日志</td>
-</tr>
-<tr>
-<td>buffer</td>
-<td>用来指定日志写入时的缓存大小。默认是64k</td>
-</tr>
-<tr>
-<td>gzip</td>
-<td>日志写入前先进行压缩。压缩率可以指定，从1到9数值越大压缩比越高，同时压缩的速度也越慢。默认是1</td>
-</tr>
-<tr>
-<td>flush</td>
-<td>设置缓存的有效时间。如果超过flush指定的时间，缓存中的内容将被清空</td>
-</tr>
-<tr>
-<td>if</td>
-<td>条件判断。如果指定的条件计算为0或空字符串，那么该请求不会写入日志</td>
-</tr>
-</tbody>
-</table>
-</div>
-<blockquote>
-<p>一般场景中,这些参数都不用配置,极端优化时才可能会考虑这些参数</p>
-<p><code>access_log off</code> 中的 <code>off</code> ,表示不记录访问日志</p>
-</blockquote>
-<h5 id="使用-log-format-自定义访问日志格式"><a href="#使用-log-format-自定义访问日志格式" class="headerlink" title="使用 log_format 自定义访问日志格式"></a>使用 <code>log_format</code> 自定义访问日志格式</h5><p>日志格式定义说明</p>
-<p>定义语法<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">log_format name [escape=default|json] string ...;</span><br></pre></td></tr></table></figure></p>
-<p>如下例:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">access_log /var/logs/nginx-access.log main</span><br><span class="line">log_format main &apos;$remote_addr - $remote_user [$time_local] &quot;$request&quot; &apos;</span><br><span class="line">                &apos;$status $body_bytes_sent &quot;$http_referer&quot; &apos;</span><br><span class="line">                &apos;&quot;$http_user_agent&quot; &quot;$http_x_frowarded_for&quot;&apos;</span><br></pre></td></tr></table></figure></p>
-<p>其中, <code>log_format</code> 为日志格式关键参数,不能随意改变。<br><code>main</code> 是为日志格式指定的标签,记录日志时会通过这个 <code>main</code> 标签选择指定的格式。标签后面跟着的都是可以记录的日志信息。</p>
-<p>具体日志参数信息如下:</p>
-<div class="table-container">
-<table>
-<thead>
-<tr>
-<th>nginx 日志变量</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>$remote_addr</td>
-<td>记录访问网站的客户端IP地址</td>
-</tr>
-<tr>
-<td>$http_x_forwarded_for</td>
-<td>当前端游代理服务器时,是指 Web 节点记录客户端地址的配置,此参数生效的前提是代理服务器上也进行了相关的 x_forwarded_for 设置</td>
-</tr>
-<tr>
-<td>$remote_user</td>
-<td>远程客户端名称</td>
-</tr>
-<tr>
-<td>$time_local</td>
-<td>记录访问时间与时区</td>
-</tr>
-<tr>
-<td>$request</td>
-<td>用户的 http 请求起始行信息</td>
-</tr>
-<tr>
-<td>$status</td>
-<td>http 状态码,记录请求返回的状态,例如:200、404、301 等</td>
-</tr>
-<tr>
-<td>$body_bytes_sents</td>
-<td>服务器发送给客户端的响应的 body 字节数</td>
-</tr>
-<tr>
-<td>$http_referer</td>
-<td>记录此次请求是从哪个链接访问过来的,可以根据 referer 进行防盗链设置</td>
-</tr>
-<tr>
-<td>$http_user_agent</td>
-<td>记录客户端访问信息,例如:浏览器、手机客户端等</td>
-</tr>
-</tbody>
-</table>
-</div>
-<blockquote>
-<p>所有的日志段以空格分割,一行可以记录多个</p>
-<p>在没有特殊要求的情况下,采用默认配置即可,更多可以设置的目录日志信息的变量见 <a href="http://nginx.org/en/docs/http/ngx_http_log_module.html" target="_blank" rel="noopener">nginx日志变量</a></p>
-</blockquote>
-<p>访问日志可以放置的标签段为<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">context: http; server; location; if in location; limit_except</span><br></pre></td></tr></table></figure></p>
-<p><a href="http://nginx.org/en/docs/http/ngx_http_log_module.html" target="_blank" rel="noopener">更多内容参考 nginx 官方网站</a></p>
-<h4 id="nginx-日志切割"><a href="#nginx-日志切割" class="headerlink" title="nginx 日志切割"></a><code>nginx</code> 日志切割</h4><p>默认情况下 <code>nginx</code> 会把所有的访问日志生成到一个指定的访问日志文件 <code>access.log</code> 中,但这样一来,时间长了就导致日志文件内容过大,不利于日志的分析或处理,因此,一般做法会将 <code>nginx</code> 的访问日志按天或按小时进行分割,分成不同的文件保存。</p>
-<p>新建一个 <code>shell</code> 脚本 <code>cut_nginx_log.sh</code>,内容如下</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">!/bin/sh</span></span><br><span class="line">DateFormat=`date +%Y%m%d`</span><br><span class="line">LogDir="/application/nginx/logs"</span><br><span class="line">LogName="access_default";</span><br><span class="line">[ -d $LogDir ] &amp;&amp; cd $LogDir || exit 1</span><br><span class="line">[ -f $&#123;LogName&#125;.log ] || exit 1</span><br><span class="line">/bin/mv $&#123;LogName&#125;.log $&#123;DateFormat&#125;_$&#123;LogName&#125;.log</span><br><span class="line">/bin/touch $&#123;LogName&#125;.log</span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>脚本实现切割 <code>nginx</code> 日志的思想,是将正在写入的 <code>nginx</code> 日志 <code>access_defalut</code> 修改为带日期的的格式文件 <code>xxx_xx_xx_access_default</code>, 然后新建一个 <code>access_default</code> 文件</p>
-</blockquote>
-<p>通过定时任务的方式实现每日 00 点整定时执行 <code>cut_nginx_log.sh</code> 切割日志,将以下内容写入到 <code>/var/spool/cron/root</code> 中<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">#每日0点切割nginx日志 \</span><br><span class="line">00 00 * * * /bin/sh script_path/cut_nginx_log.sh &gt; /dev/null 2&gt;&amp;1</span><br></pre></td></tr></table></figure></p>
-<p>查看 <code>crontab</code> 是否添加成功<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ crontab -l</span><br><span class="line"></span><br><span class="line">#每日0点切割nginx日志 \</span><br><span class="line">00 00 * * * /bin/sh script_path/cut_nginx_log.sh &gt; /dev/null 2&gt;&amp;1</span><br></pre></td></tr></table></figure></p>
+<h6 id="安装-libfatscommon"><a href="#安装-libfatscommon" class="headerlink" title="安装 libfatscommon"></a>安装 libfatscommon</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git clone https://github.com/happyfish100/libfastcommon.git --depth 1 &amp;&amp; libfastcommon/make.sh &amp;&amp; sudo libfastcommon/make.sh install</span><br></pre></td></tr></table></figure>
+<h6 id="安装-FastDFS"><a href="#安装-FastDFS" class="headerlink" title="安装 FastDFS"></a>安装 FastDFS</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ sudo mkdir -p /usr/local/fastdfs</span><br><span class="line">$ git clone https://github.com/happyfish100/fastdfs.git --depth 1 &amp;&amp; fastdfs/make.sh &amp;&amp; sudo fastdfs/make.sh install</span><br><span class="line">$ sudo cp fastdfs/conf/http.conf /etc/fdfs/ &amp;&amp; sudo cp fastdfs/conf/mime.types /etc/fdfs/</span><br></pre></td></tr></table></figure>
+<h6 id="安装-FastDFS-Nginx-模块"><a href="#安装-FastDFS-Nginx-模块" class="headerlink" title="安装 FastDFS Nginx 模块"></a>安装 FastDFS Nginx 模块</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ wget wget http://nginx.org/download/nginx-&#123;version&#125;.tar.gz &amp;&amp; tar -zxvf nginx-&#123;version&#125;.tar.gz</span><br><span class="line">$ sudo git clone https://github.com/happyfish100/fastdfs-nginx-module.git --depth 1 /usr/local/src/fastdfs-nginx-module</span><br><span class="line">$ sudo cp /usr/local/src/fastdfs-nginx-module/src/mod_fastdfs.conf /etc/fdfs</span><br></pre></td></tr></table></figure>
+<p>这里如果你的服务器已经安装了 nginx 需要下载对应版本的包, 然后通过 <code>nginx -V</code> 命令获取当时的编译参数, 再在后面添加上 <code>--add-module=/usr/local/fastdfs-nginx-module/src/</code>, <code>make</code> 之后再将可执行文件覆盖原来的可执行文件. 例如我已经安装的 nginx 参数: </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">nginx version: nginx/1.10.3 (Ubuntu)</span><br><span class="line">built with OpenSSL 1.0.2g  1 Mar 2016</span><br><span class="line">TLS SNI support enabled</span><br><span class="line">configure arguments: --with-cc-opt=&apos;-g -O2 -fPIE -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2&apos; --with-ld-opt=&apos;-Wl,-Bsymbolic-functions -fPIE -pie -Wl,-z,relro -Wl,-z,now&apos; --prefix=/usr/share/nginx --conf-path=/etc/nginx/nginx.conf --http-log-path=/var/log/nginx/access.log --error-log-path=/var/log/nginx/error.log --lock-path=/var/lock/nginx.lock --pid-path=/run/nginx.pid --http-client-body-temp-path=/var/lib/nginx/body --http-fastcgi-temp-path=/var/lib/nginx/fastcgi --http-proxy-temp-path=/var/lib/nginx/proxy --http-scgi-temp-path=/var/lib/nginx/scgi --http-uwsgi-temp-path=/var/lib/nginx/uwsgi --with-debug --with-pcre-jit --with-ipv6 --with-http_ssl_module --with-http_stub_status_module --with-http_realip_module --with-http_auth_request_module --with-http_addition_module --with-http_dav_module --with-http_geoip_module --with-http_gunzip_module --with-http_gzip_static_module --with-http_image_filter_module --with-http_v2_module --with-http_sub_module --with-http_xslt_module --with-stream --with-stream_ssl_module --with-mail --with-mail_ssl_module --with-threads</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ cd nginx-&#123;version&#125;</span><br><span class="line">$ ./configure --prefix=/usr/local/nginx --with-cc-opt=&apos;-g -O2 -fPIE -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2&apos; --with-ld-opt=&apos;-Wl,-Bsymbolic-functions -fPIE -pie -Wl,-z,relro -Wl,-z,now&apos; --prefix=/usr/share/nginx --conf-path=/etc/nginx/nginx.conf --http-log-path=/var/log/nginx/access.log --error-log-path=/var/log/nginx/error.log --lock-path=/var/lock/nginx.lock --pid-path=/run/nginx.pid --http-client-body-temp-path=/var/lib/nginx/body --http-fastcgi-temp-path=/var/lib/nginx/fastcgi --http-proxy-temp-path=/var/lib/nginx/proxy --http-scgi-temp-path=/var/lib/nginx/scgi --http-uwsgi-temp-path=/var/lib/nginx/uwsgi --with-debug --with-pcre-jit --with-ipv6 --with-http_ssl_module --with-http_stub_status_module --with-http_realip_module --with-http_auth_request_module --with-http_addition_module --with-http_dav_module --with-http_geoip_module --with-http_gunzip_module --with-http_gzip_static_module --with-http_image_filter_module --with-http_v2_module --with-http_sub_module --with-http_xslt_module --with-stream --with-stream_ssl_module --with-mail --with-mail_ssl_module --with-threads --add-module=/usr/local/src/fastdfs-nginx-module/src/</span><br></pre></td></tr></table></figure>
+<p>如果已经安装了 nginx 那么就只执行 make 不要执行 make install, 执行 make 之后将 <code>objs/nginx</code> 覆盖原来的 nginx 可执行文件; 为了安全起见应该将原来的可执行文件备份一份</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo mv /usr/sbin/nginx /usr/sbin/nginx.bak &amp;&amp; sudo mv objs/nginx /usr/sbin/nginx</span><br></pre></td></tr></table></figure>
+<h4 id="启动-FastDFS"><a href="#启动-FastDFS" class="headerlink" title="启动 FastDFS"></a>启动 FastDFS</h4><p>FastDFS 分布式文件系统有三个角色: 跟踪服务器 (Tracker Server)、存储服务器 (Storage Server) 和客户端 (Client): </p>
+<ul>
+<li><p>跟踪服务器 (Tracker Server): 主要做调度工作, 起到均衡的作用; 负责管理所有的 storage server 和 group, 每个 storage 在启动后会连接 Tracker, 告知自己所属 group 等信息, 并保持周期性心跳.</p>
+</li>
+<li><p>存储服务器 (Storage Server): 存储服务器, 主要提供容量和备份服务; 以 group 为单位, 每个 group 内可以有多台 storage server, 数据互为备份.<br>s</p>
+</li>
+<li>客户端 (Client): 客户端, 传下载数据的服务器, 也就是项目所部署的服务器</li>
+</ul>
+<h6 id="配置启动-Tracker-Server"><a href="#配置启动-Tracker-Server" class="headerlink" title="配置启动 Tracker Server"></a>配置启动 Tracker Server</h6><ul>
+<li>修改配置文件  <code>sudo cp /etc/fdfs/tracker.conf.sample /etc/fdfs/tracker.conf &amp;&amp; sudo vim /etc/fdfs/tracker.conf</code></li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">port=22122  # tracker服务器端口（默认22122,一般不修改）</span><br><span class="line">base_path=/usr/local/fastdfs  # 存储日志和数据的根目录</span><br></pre></td></tr></table></figure>
+<ul>
+<li>启动 Tracker Server</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">sudo /etc/init.d/fdfs_trackerd start #启动tracker服务</span><br><span class="line">sudo /etc/init.d/fdfs_trackerd restart #重启动tracker服务</span><br><span class="line">sudo /etc/init.d/fdfs_trackerd stop #停止tracker服务</span><br><span class="line">sudo chkconfig fdfs_trackerd on #自启动tracker服务</span><br></pre></td></tr></table></figure>
+<h6 id="配置启动-Storage-Server"><a href="#配置启动-Storage-Server" class="headerlink" title="配置启动 Storage Server"></a>配置启动 Storage Server</h6><ul>
+<li>修改配置文件 <code>sudo cp /etc/fdfs/storage.conf.sample /etc/fdfs/storage.conf &amp;&amp; sudo vim /etc/fdfs/storage.conf</code></li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">port=23000  # storage服务端口（默认23000,一般不修改）</span><br><span class="line">base_path=/usr/local/fastdfs  # 数据和日志文件存储根目录</span><br><span class="line">store_path0=/usr/local/fastdfs  # 第一个存储目录</span><br><span class="line">tracker_server=192.168.52.2:22122  # 服务器1</span><br><span class="line">tracker_server=192.168.52.3:22122  # 服务器2</span><br><span class="line">tracker_server=192.168.52.4:22122  # 服务器3</span><br><span class="line">http.server_port=8888  # http访问文件的端口(默认8888,看情况修改,和nginx中保持一致)</span><br></pre></td></tr></table></figure>
+<ul>
+<li>启动 Storage Server</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">sudo /etc/init.d/fdfs_storaged start #启动storage服务</span><br><span class="line">sudo /etc/init.d/fdfs_storaged restart #重动storage服务</span><br><span class="line">sudo /etc/init.d/fdfs_storaged stop #停止动storage服务</span><br><span class="line">sudo chkconfig fdfs_storaged on #自启动storage服务</span><br></pre></td></tr></table></figure>
+<h6 id="配置客户端并测试"><a href="#配置客户端并测试" class="headerlink" title="配置客户端并测试"></a>配置客户端并测试</h6><ul>
+<li>修改配置文件 <code>sudo cp /etc/fdfs/client.conf.sample /etc/fdfs/client.conf &amp;&amp; sudo vim /etc/fdfs/client.conf</code></li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">base_path=/usr/local/fastdfs</span><br><span class="line">tracker_server=192.168.52.2:22122  # 服务器1</span><br><span class="line">tracker_server=192.168.52.3:22122  # 服务器2</span><br><span class="line">tracker_server=192.168.52.4:22122  # 服务器3</span><br></pre></td></tr></table></figure>
+<ul>
+<li>测试: 如果正确返回路径则代表成功</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ fdfs_upload_file /etc/fdfs/client.conf  filename</span><br></pre></td></tr></table></figure>
+<h6 id="配置-Nginx"><a href="#配置-Nginx" class="headerlink" title="配置 Nginx"></a>配置 Nginx</h6><ul>
+<li>修改配置文件 <code>sudo vim /etc/fdfs/mod_fastdfs.conf</code></li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">tracker_server=192.168.52.2:22122  # 服务器1</span><br><span class="line">tracker_server=192.168.52.3:22122  # 服务器2</span><br><span class="line">tracker_server=192.168.52.4:22122  # 服务器3</span><br><span class="line">url_have_group_name=true</span><br><span class="line">store_path0=/usr/local/fastdfs</span><br></pre></td></tr></table></figure>
+<ul>
+<li>添加配置文件 <code>sudo vim /etc/nginx/conf.d/fastdfs.conf</code></li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">    listen       8888;    ## 该端口为storage.conf中的http.server_port相同</span><br><span class="line">    server_name  localhost;</span><br><span class="line">    location ~/group[0-9]/ &#123;</span><br><span class="line">        ngx_fastdfs_module;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    error_page   500 502 503 504  /50x.html;</span><br><span class="line">    location = /50x.html &#123;</span><br><span class="line">    root   html;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>最后通过 <code>http://192.168.52.2:8888/group1/M00/00/00/xxx.x</code> 访问测试上传的文件是否成功就可以了</p>
+<h4 id="数据来源"><a href="#数据来源" class="headerlink" title="数据来源"></a>数据来源</h4><p><a href="https://github.com/happyfish100/fastdfs/wiki" target="_blank" rel="noopener">FastDFS Wiki</a></p>
 
       
     </div>
@@ -506,7 +421,7 @@
           
             <a href="/tags/Linux/" rel="tag"># Linux</a>
           
-            <a href="/tags/Nginx/" rel="tag"># Nginx</a>
+            <a href="/tags/FastDFS/" rel="tag"># FastDFS</a>
           
         </div>
       
@@ -519,8 +434,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/posts/hello-world.html" rel="next" title="Hello World">
-                <i class="fa fa-chevron-left"></i> Hello World
+              <a href="/posts/rsa-asymmetric-encryption.html" rel="next" title="Golang 实现的非对称加密">
+                <i class="fa fa-chevron-left"></i> Golang 实现的非对称加密
               </a>
             
           </div>
@@ -528,10 +443,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/posts/laravel-modify-time-field.html" rel="prev" title="Laravel(Lumen) 5.X 修改时间字段为 INT 类型">
-                Laravel(Lumen) 5.X 修改时间字段为 INT 类型 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -689,7 +600,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#nginx-错误日志信息介绍"><span class="nav-number">1.</span> <span class="nav-text">nginx 错误日志信息介绍</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#nginx-访问日志介绍"><span class="nav-number">2.</span> <span class="nav-text">nginx 访问日志介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#使用-log-format-自定义访问日志格式"><span class="nav-number">2.1.</span> <span class="nav-text">使用 log_format 自定义访问日志格式</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#nginx-日志切割"><span class="nav-number">3.</span> <span class="nav-text">nginx 日志切割</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#FastDFS"><span class="nav-number">1.</span> <span class="nav-text">FastDFS</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#安装-libfatscommon"><span class="nav-number">1.0.1.</span> <span class="nav-text">安装 libfatscommon</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#安装-FastDFS"><span class="nav-number">1.0.2.</span> <span class="nav-text">安装 FastDFS</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#安装-FastDFS-Nginx-模块"><span class="nav-number">1.0.3.</span> <span class="nav-text">安装 FastDFS Nginx 模块</span></a></li></ol></li></ol><li class="nav-item nav-level-4"><a class="nav-link" href="#启动-FastDFS"><span class="nav-number">2.</span> <span class="nav-text">启动 FastDFS</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#配置启动-Tracker-Server"><span class="nav-number">2.0.1.</span> <span class="nav-text">配置启动 Tracker Server</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#配置启动-Storage-Server"><span class="nav-number">2.0.2.</span> <span class="nav-text">配置启动 Storage Server</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#配置客户端并测试"><span class="nav-number">2.0.3.</span> <span class="nav-text">配置客户端并测试</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#配置-Nginx"><span class="nav-number">2.0.4.</span> <span class="nav-text">配置 Nginx</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#数据来源"><span class="nav-number">3.</span> <span class="nav-text">数据来源</span></a></li></div>
             
 
           </div>
