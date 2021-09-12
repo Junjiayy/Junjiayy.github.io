@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="规范明确, 清晰, 一致的 Git 分支管理, 可以帮助在多人协作时更加和谐. 每个人对工具的使用往往各有偏好, 各种方法各有利弊, 无所谓对错. 但涉及团队协作的方面需要有一些一致的规范, 遵守一致的规范也能提升大家的效率.  除了一致性之外，这个规范的目的是以下几点:  确保可以轻易确定特定时间发布或运行的版本. 在新发布的程序存在重大缺陷时, 可以尽快 rollback 到上一个稳定版本.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Git 使用记录和常用命令收集">
+<meta property="og:url" content="http://example.com/posts/git-usage-record.html">
+<meta property="og:site_name" content="Road to growth of rookie">
+<meta property="og:description" content="规范明确, 清晰, 一致的 Git 分支管理, 可以帮助在多人协作时更加和谐. 每个人对工具的使用往往各有偏好, 各种方法各有利弊, 无所谓对错. 但涉及团队协作的方面需要有一些一致的规范, 遵守一致的规范也能提升大家的效率.  除了一致性之外，这个规范的目的是以下几点:  确保可以轻易确定特定时间发布或运行的版本. 在新发布的程序存在重大缺陷时, 可以尽快 rollback 到上一个稳定版本.">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/images/git-desc-page.png">
+<meta property="og:image" content="http://example.com/images/git-log-garbled.png">
+<meta property="article:published_time" content="2020-09-11T15:52:00.000Z">
+<meta property="article:modified_time" content="2020-09-11T15:52:00.000Z">
+<meta property="article:author" content="Riley">
+<meta property="article:tag" content="Git">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/images/git-desc-page.png">
+
+<link rel="canonical" href="http://example.com/posts/git-usage-record.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en-US'
+  };
+</script>
+
+  <title>Git 使用记录和常用命令收集 | Road to growth of rookie</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Road to growth of rookie</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">Meaningful life is called life</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en-US">
+    <link itemprop="mainEntityOfPage" href="http://example.com/posts/git-usage-record.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Riley">
+      <meta itemprop="description" content="A computer rookie blog that records something that he thinks is worthy of being recorded. It may be life, it may be work, or it may be a bug! ! !">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Road to growth of rookie">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Git 使用记录和常用命令收集
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-09-11 23:52:00" itemprop="dateCreated datePublished" datetime="2020-09-11T23:52:00+08:00">2020-09-11</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>规范明确, 清晰, 一致的 Git 分支管理, 可以帮助在多人协作时更加和谐.</p>
+<p>每个人对工具的使用往往各有偏好, 各种方法各有利弊, 无所谓对错. 但涉及团队协作的方面需要有一些一致的规范, 遵守一致的规范也能提升大家的效率.</p>
+<p><img src="/images/git-desc-page.png" alt="image"></p>
+<p>除了一致性之外，这个规范的目的是以下几点:</p>
+<ul>
+<li>确保可以轻易确定特定时间发布或运行的版本. 在新发布的程序存在重大缺陷时, 可以尽快 <code>rollback</code> 到上一个稳定版本.</li>
+<li>在需要修复紧急 <code>bug</code> 并尽快发布时, 可以只发布必要的 <code>bugfix</code> 而不同时发布还不应发布的其他改动.</li>
+</ul>
+<span id="more"></span>
+
+<h4 id="Git-分支管理使用规范"><a href="#Git-分支管理使用规范" class="headerlink" title="Git 分支管理使用规范"></a><code>Git</code> 分支管理使用规范</h4><h5 id="branch-和-tag"><a href="#branch-和-tag" class="headerlink" title="branch 和 tag"></a><code>branch</code> 和 <code>tag</code></h5><blockquote>
+<p>每个项目的 <code>repo</code> 都应该含有且仅有以下的 <code>branch</code> 和 <code>tag</code></p>
+</blockquote>
+<p><strong>Branch</strong>: <code>master</code> 和 <code>release</code>, 其中 <code>master</code> 对应目前的开发分支, 所有的 <code>pull request</code> 都应该发到这个分支. <code>release</code> 是当前发布的分支，在这个分支只能增加从 <code>master</code> <code>cherrypick</code> 过来的 <code>commit</code>.</p>
+<p><strong>Tag</strong>: 对应每个发布版本的 <code>tag</code>, <code>SDK</code> 和应用程序的 <code>tag</code> 应该遵照 <code>&lt;major&gt;.&lt;minor&gt;.&lt;patch&gt;</code> 的命名风格，如 2.5.1；服务端程序的 <code>tag</code> 以发布的日期命名, 如 <code>2014.11.13</code>, <code>bugfix</code> 的 <code>tag</code> 应该遵从 <code>&lt;major&gt;.&lt;minor&gt;.&lt;patch&gt;-bugfix</code> 的风格, 如果 <code>tag</code> 已经存在, 则可以使用在后面添加小写字母的方式延续, 例如 <code>2.5.2-bugfix</code> 后面就是 <code>2.5.2-bugfix-a</code>.</p>
+<blockquote>
+<p>在一个 <code>repo</code> 中只应该有以上说的 <code>branch</code> 和 <code>tag</code>, 在开发过程中使用到的 <code>feature branch</code> 等请都放在个人的 <code>fork</code>, 一律通过向 <code>master</code> 发 <code>pull request</code> 的方式给 <code>repo</code> 提交代码。</p>
+</blockquote>
+<h5 id="新版本发布流程"><a href="#新版本发布流程" class="headerlink" title="新版本发布流程"></a>新版本发布流程</h5><ul>
+<li>确保所有要发布的 <code>pull request</code> 都已经 <code>merge</code> 到 <code>master</code>;</li>
+<li>使用 <code>master branch</code> 的代码进行测试, 如果发现 <code>bug</code>, 把对应的 <code>bugfix</code> <code>merge</code> 到 <code>master</code>;</li>
+<li>删除旧的 <code>release branch</code>, 并从当前的 <code>master</code> 创建新的 <code>release branch</code>; </li>
+<li>发布完成后在当前的 <code>release branch</code> 打上对应版本的 <code>tag</code>.</li>
+</ul>
+<h5 id="Bugfix-流程"><a href="#Bugfix-流程" class="headerlink" title="Bugfix 流程"></a><code>Bugfix</code> 流程</h5><p>这里的 <code>bugfix</code> 指的是修复已经发布的程序（<code>release branch</code>）中的缺陷. <code>master</code> 里的 <code>bug</code> 请直接 <code>merge bugfix</code> 到 <code>master</code>.</p>
+<ul>
+<li>如果此缺陷在 <code>master</code> 中还存在，请先 <code>merge bugfix</code> 到 <code>master</code>, 否则跳到下一步;</li>
+<li>在 <code>release branch</code> 从 <code>master cherrypick</code> 修复该缺陷的一个或多个 <code>commit</code>;</li>
+<li>发布完成后在当前的 <code>release branch</code> 打上 <code>tag</code>. </li>
+</ul>
+<blockquote>
+<p>并不是每个 <code>bug</code> 都有专门发布 <code>bugfix</code> 版的必要, 对于不紧急的 <code>bug</code>, 可以在 <code>master</code> 里修复后随下一个版本发布</p>
+</blockquote>
+<h4 id="Git-常用命令收集"><a href="#Git-常用命令收集" class="headerlink" title="Git 常用命令收集"></a><code>Git</code> 常用命令收集</h4><h5 id="撤销本次-Merge"><a href="#撤销本次-Merge" class="headerlink" title="撤销本次 Merge"></a>撤销本次 <code>Merge</code></h5><p>开发过程中, 多多少少总会出现在版本快要上线准备提交代码时, 某个功能延后或剔除的情况, 无奈只能将本次的 <code>merge</code> 撤销掉.</p>
+<h6 id="快进合并下和修复完冲突的-Merge-撤销"><a href="#快进合并下和修复完冲突的-Merge-撤销" class="headerlink" title="快进合并下和修复完冲突的 Merge 撤销"></a>快进合并下和修复完冲突的 <code>Merge</code> 撤销</h6><p>找到最后一次提交到 <code>master</code> 分支的版本号，即 <code>merge</code> 前的版本号, 并直接回滚</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git reset --hard (merge 前的 commit id)</span><br></pre></td></tr></table></figure>
+
+<h6 id="含有冲突的情况下-Merge-撤销"><a href="#含有冲突的情况下-Merge-撤销" class="headerlink" title="含有冲突的情况下 Merge 撤销"></a>含有冲突的情况下 <code>Merge</code> 撤销</h6><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git reset --merge</span><br></pre></td></tr></table></figure>
+
+<h5 id="Git-更新单个指定文件"><a href="#Git-更新单个指定文件" class="headerlink" title="Git 更新单个指定文件"></a><code>Git</code> 更新单个指定文件</h5><p>在 <code>Laravel/Lumen</code> 项目中, 有的时候我们会通过 <code>composer</code> 增加新的扩展包, 在版本发布的时候就需要先更新 <code>composer.json</code> 和 <code>composer.lock</code> 两个文件, 然后执行 <code>composer install</code> 确保服务不会因为缺少扩展包出错.</p>
+<p>如果想拿远端 <code>git</code> 服务器上的最新版本 (或某个特定版本) 覆盖本地的修改, 可以使用 <code>git pull</code> 命令, 但这会 <strong>全面更新本地代码库和工作拷贝</strong>; 想放弃本地工作拷贝所做修改, 可以使用 <code>git checkout file/to/path</code> 命令, 但该命令只能用本地库覆盖你的工作拷贝, 并不能取得远端版本的更新.</p>
+<p>正确的做法应该是先更新本地库 (但不更新工作拷贝), 然后用本地库来更新单个的工作拷贝文件</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ git fetch</span><br><span class="line">$ git checkout origin/master -- composer.json</span><br><span class="line">$ git checkout origin/master -- composer.lock</span><br></pre></td></tr></table></figure>
+
+<h5 id="git-log-乱码问题解决"><a href="#git-log-乱码问题解决" class="headerlink" title="git log 乱码问题解决"></a><code>git log</code> 乱码问题解决</h5><p><img src="/images/git-log-garbled.png" alt="image"></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 在环境变量中增加如下参数</span></span><br><span class="line"><span class="built_in">export</span> LESSCHARSET=utf-8</span><br></pre></td></tr></table></figure>
+
+<h5 id="git-summary-使用"><a href="#git-summary-使用" class="headerlink" title="git summary 使用"></a><code>git summary</code> 使用</h5><p><code>git summary</code> 可以查看所有贡献者对项目的贡献程度</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 这个命令默认没有,在mac下需要通过 ``brew install git-extras`` 安装</span></span><br><span class="line">$ git summary</span><br></pre></td></tr></table></figure>
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Git/" rel="tag"># Git</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/posts/api-design.html" rel="prev" title="API 设计小谈">
+      <i class="fa fa-chevron-left"></i> API 设计小谈
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/posts/product-and-developers-relation.html" rel="next" title="关于产品与开发之间关系的一些吐槽和想法">
+      关于产品与开发之间关系的一些吐槽和想法 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#Git-%E5%88%86%E6%94%AF%E7%AE%A1%E7%90%86%E4%BD%BF%E7%94%A8%E8%A7%84%E8%8C%83"><span class="nav-number">1.</span> <span class="nav-text">Git 分支管理使用规范</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#branch-%E5%92%8C-tag"><span class="nav-number">1.1.</span> <span class="nav-text">branch 和 tag</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%96%B0%E7%89%88%E6%9C%AC%E5%8F%91%E5%B8%83%E6%B5%81%E7%A8%8B"><span class="nav-number">1.2.</span> <span class="nav-text">新版本发布流程</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Bugfix-%E6%B5%81%E7%A8%8B"><span class="nav-number">1.3.</span> <span class="nav-text">Bugfix 流程</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Git-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E6%94%B6%E9%9B%86"><span class="nav-number">2.</span> <span class="nav-text">Git 常用命令收集</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%92%A4%E9%94%80%E6%9C%AC%E6%AC%A1-Merge"><span class="nav-number">2.1.</span> <span class="nav-text">撤销本次 Merge</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E5%BF%AB%E8%BF%9B%E5%90%88%E5%B9%B6%E4%B8%8B%E5%92%8C%E4%BF%AE%E5%A4%8D%E5%AE%8C%E5%86%B2%E7%AA%81%E7%9A%84-Merge-%E6%92%A4%E9%94%80"><span class="nav-number">2.1.1.</span> <span class="nav-text">快进合并下和修复完冲突的 Merge 撤销</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E5%90%AB%E6%9C%89%E5%86%B2%E7%AA%81%E7%9A%84%E6%83%85%E5%86%B5%E4%B8%8B-Merge-%E6%92%A4%E9%94%80"><span class="nav-number">2.1.2.</span> <span class="nav-text">含有冲突的情况下 Merge 撤销</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Git-%E6%9B%B4%E6%96%B0%E5%8D%95%E4%B8%AA%E6%8C%87%E5%AE%9A%E6%96%87%E4%BB%B6"><span class="nav-number">2.2.</span> <span class="nav-text">Git 更新单个指定文件</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#git-log-%E4%B9%B1%E7%A0%81%E9%97%AE%E9%A2%98%E8%A7%A3%E5%86%B3"><span class="nav-number">2.3.</span> <span class="nav-text">git log 乱码问题解决</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#git-summary-%E4%BD%BF%E7%94%A8"><span class="nav-number">2.4.</span> <span class="nav-text">git summary 使用</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Riley</p>
+  <div class="site-description" itemprop="description">A computer rookie blog that records something that he thinks is worthy of being recorded. It may be life, it may be work, or it may be a bug! ! !</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">20</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="mailto:junjiayy@gmail.com" title="E-Mail → mailto:junjiayy@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://github.com/Junjiayy" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Junjiayy" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://lydiadai.github.io/" title="https:&#x2F;&#x2F;lydiadai.github.io&#x2F;" rel="noopener" target="_blank">Lydia blog</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://hexo.iluoy.com/" title="https:&#x2F;&#x2F;hexo.iluoy.com&#x2F;" rel="noopener" target="_blank">Witty Panda</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Riley</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '7128ec0004a023b91abd',
+      clientSecret: '867efcae82773ee4dc23433aaf974fef99e70c8c',
+      repo        : 'Junjiayy.github.io',
+      owner       : 'junjia_yy@outlook.com',
+      admin       : ['Junjiayy'],
+      id          : '40cb86404f183f0bd950fd93f2792824',
+        language: 'zh-CN',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+</body>
+</html>

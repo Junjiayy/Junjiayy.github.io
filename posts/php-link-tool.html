@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="在 Docker 还没有在国内流行起来的早期开发中, 关于 PHP 本地开发环境的搭建, 我尝试过使用本机安装 Nginx + PHP, 也尝试过使用虚拟机的方式. 各有各的优缺点.  因为我们之前生产环境使用的是 Docker 进行部署, 所以为了模拟生产环境需要使用线上的 Docker 镜像; 但是每个项目都写一个给本地开发环境使用的 docker-compose.yml 我又觉得很麻烦, 就">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MAC 环境下构建 PHP 自动化环境工具">
+<meta property="og:url" content="http://example.com/posts/php-link-tool.html">
+<meta property="og:site_name" content="Road to growth of rookie">
+<meta property="og:description" content="在 Docker 还没有在国内流行起来的早期开发中, 关于 PHP 本地开发环境的搭建, 我尝试过使用本机安装 Nginx + PHP, 也尝试过使用虚拟机的方式. 各有各的优缺点.  因为我们之前生产环境使用的是 Docker 进行部署, 所以为了模拟生产环境需要使用线上的 Docker 镜像; 但是每个项目都写一个给本地开发环境使用的 docker-compose.yml 我又觉得很麻烦, 就">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/images/php-link-tool-link-example.png">
+<meta property="og:image" content="http://example.com/images/php-link-tool-link-browsers.png">
+<meta property="og:image" content="http://example.com/images/php-link-tool-unlink-exmple.png">
+<meta property="article:published_time" content="2021-09-01T05:41:00.000Z">
+<meta property="article:modified_time" content="2021-09-01T05:41:00.000Z">
+<meta property="article:author" content="Riley">
+<meta property="article:tag" content="Php">
+<meta property="article:tag" content="Mac">
+<meta property="article:tag" content="Shell">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/images/php-link-tool-link-example.png">
+
+<link rel="canonical" href="http://example.com/posts/php-link-tool.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en-US'
+  };
+</script>
+
+  <title>MAC 环境下构建 PHP 自动化环境工具 | Road to growth of rookie</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Road to growth of rookie</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">Meaningful life is called life</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en-US">
+    <link itemprop="mainEntityOfPage" href="http://example.com/posts/php-link-tool.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Riley">
+      <meta itemprop="description" content="A computer rookie blog that records something that he thinks is worthy of being recorded. It may be life, it may be work, or it may be a bug! ! !">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Road to growth of rookie">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          MAC 环境下构建 PHP 自动化环境工具
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2021-09-01 13:41:00" itemprop="dateCreated datePublished" datetime="2021-09-01T13:41:00+08:00">2021-09-01</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>在 <code>Docker</code> 还没有在国内流行起来的早期开发中, 关于 <code>PHP</code> 本地开发环境的搭建, 我尝试过使用本机安装 <code>Nginx</code> + <code>PHP</code>, 也尝试过使用虚拟机的方式. 各有各的优缺点. </p>
+<p>因为我们之前生产环境使用的是 <code>Docker</code> 进行部署, 所以为了模拟生产环境需要使用线上的 <code>Docker</code> 镜像; 但是每个项目都写一个给本地开发环境使用的 <code>docker-compose.yml</code> 我又觉得很麻烦, 就花了一点时间写了一个自动化工具</p>
+<p>之前有尝试过 <a target="_blank" rel="noopener" href="https://laravel.com/docs/8.x/valet">Laravel Valet</a> 虽然它的实现对现在来说, 已经有些老旧了, 但是它的运行方式我很喜欢, 所以我打算按照它的方式来写这个自动化工具</p>
+<blockquote>
+<p>项目地址: <a target="_blank" rel="noopener" href="https://gogs.ijunj.com/common/php-link-tool">https://gogs.ijunj.com/common/php-link-tool</a></p>
+</blockquote>
+<span id="more"></span>
+
+<h4 id="构建自动化工具脚本"><a href="#构建自动化工具脚本" class="headerlink" title="构建自动化工具脚本"></a>构建自动化工具脚本</h4><p>本来这个脚本打算用 <code>Go</code> 去实现, 但是写到一半又觉得有点麻烦且过于繁琐, 都是一些 <code>Shell</code> 命令, 有点脱裤子放屁的感觉, 还不如直接用 <code>Shell</code> 来实现</p>
+<h5 id="工具脚本-php-link-tool-sh"><a href="#工具脚本-php-link-tool-sh" class="headerlink" title="工具脚本 php-link-tool.sh"></a>工具脚本 <code>php-link-tool.sh</code></h5><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">set</span> -o errexit</span><br><span class="line"></span><br><span class="line">helpTips=<span class="string">&quot;Usage: php-link-tool [options] [path]</span></span><br><span class="line"><span class="string">       php-link-tool link   [path] Link to a new project</span></span><br><span class="line"><span class="string">       php-link-tool unlink [name] Unlink a project&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> [ <span class="variable">$#</span> -lt 1 ]; <span class="keyword">then</span> <span class="built_in">echo</span> <span class="string">&quot;<span class="variable">$helpTips</span>&quot;</span> &amp;&amp; <span class="built_in">exit</span> 1; <span class="keyword">fi</span></span><br><span class="line"><span class="keyword">if</span> [ <span class="string">&quot;<span class="variable">$1</span>&quot;</span> != <span class="string">&quot;link&quot;</span> ] &amp;&amp; [ <span class="string">&quot;<span class="variable">$1</span>&quot;</span> != <span class="string">&quot;unlink&quot;</span> ]; <span class="keyword">then</span> <span class="built_in">echo</span> <span class="string">&quot;<span class="variable">$helpTips</span>&quot;</span> &amp;&amp; <span class="built_in">exit</span> 1; <span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">case</span> <span class="variable">$1</span> <span class="keyword">in</span></span><br><span class="line">  <span class="string">&quot;link&quot;</span>)</span><br><span class="line">    <span class="keyword">if</span> [ <span class="string">&quot;<span class="subst">$(docker images -q base/php-openresty:2.0.1)</span>&quot;</span> = <span class="string">&quot;&quot;</span> ]; <span class="keyword">then</span></span><br><span class="line">        <span class="built_in">echo</span> <span class="string">&quot;Run install.sh to initialize the environment&quot;</span> &amp;&amp; <span class="built_in">exit</span> 1;</span><br><span class="line">    <span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> [ <span class="variable">$#</span> -gt 1 ]; <span class="keyword">then</span> path=<span class="variable">$2</span>; <span class="keyword">else</span> path=$(<span class="built_in">pwd</span>); <span class="keyword">fi</span></span><br><span class="line">    containerName=<span class="variable">$&#123;path##*/&#125;</span></span><br><span class="line">    <span class="keyword">if</span> [ <span class="string">&quot;<span class="subst">$(docker ps -aq -f name=<span class="string">&quot;<span class="variable">$containerName</span>&quot;</span>)</span>&quot;</span> != <span class="string">&quot;&quot;</span> ]; <span class="keyword">then</span></span><br><span class="line">        <span class="keyword">if</span> [ <span class="string">&quot;<span class="subst">$(docker inspect --format &#x27;&#123;&#123;.State.Running&#125;&#125;&#x27; <span class="string">&quot;<span class="variable">$containerName</span>&quot;</span>)</span>&quot;</span> = <span class="string">&quot;false&quot;</span> ]; <span class="keyword">then</span></span><br><span class="line">            docker rm <span class="string">&quot;<span class="variable">$containerName</span>&quot;</span></span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            <span class="built_in">echo</span> <span class="string">&quot;The <span class="variable">$containerName</span> project is already running, To disable this function, run the php-link-tool unlink &lt;name&gt; command&quot;</span> &amp;&amp; <span class="built_in">exit</span> 1</span><br><span class="line">        <span class="keyword">fi</span></span><br><span class="line">    <span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line">    port=$(python -c <span class="string">&#x27;import socket; s=socket.socket(); s.bind((&quot;&quot;, 0)); print(s.getsockname()[1]); s.close()&#x27;</span>)</span><br><span class="line"></span><br><span class="line">    docker run --name=<span class="string">&quot;<span class="variable">$containerName</span>&quot;</span> -d -p <span class="string">&quot;<span class="variable">$port</span>&quot;</span>:80 -v <span class="string">&quot;<span class="variable">$path</span>&quot;</span>:/www base/php-openresty:2.0.1</span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&quot;127.0.0.1  <span class="variable">$containerName</span>.local&quot;</span> | sudo tee -a /etc/hosts &gt; /dev/null</span><br><span class="line">    sudo touch /private/etc/apache2/vhosts/<span class="string">&quot;<span class="variable">$containerName</span>&quot;</span>.conf</span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&quot;&lt;VirtualHost *:80&gt;</span></span><br><span class="line"><span class="string">  ServerName <span class="variable">$containerName</span>.local</span></span><br><span class="line"><span class="string">  ProxyPass / http://127.0.0.1:<span class="variable">$port</span>/</span></span><br><span class="line"><span class="string">  ProxyPassReverse / http://127.0.0.1:<span class="variable">$port</span>/</span></span><br><span class="line"><span class="string">&lt;/VirtualHost&gt;&quot;</span> | sudo tee -a /private/etc/apache2/vhosts/<span class="string">&quot;<span class="variable">$containerName</span>&quot;</span>.conf &gt; /dev/null</span><br><span class="line"></span><br><span class="line">    sudo apachectl restart</span><br><span class="line">  ;;</span><br><span class="line">  <span class="string">&quot;unlink&quot;</span>)</span><br><span class="line">    <span class="keyword">if</span> [ <span class="variable">$#</span> -gt 1 ]; <span class="keyword">then</span> containerName=<span class="variable">$2</span>; <span class="keyword">else</span> path=$(<span class="built_in">pwd</span>); containerName=<span class="variable">$&#123;path##*/&#125;</span>; <span class="keyword">fi</span></span><br><span class="line">    <span class="keyword">if</span> [ <span class="string">&quot;<span class="subst">$(docker ps -aq -f name=<span class="string">&quot;<span class="variable">$containerName</span>&quot;</span>)</span>&quot;</span> != <span class="string">&quot;&quot;</span> ]; <span class="keyword">then</span></span><br><span class="line">        docker stop <span class="string">&quot;<span class="variable">$containerName</span>&quot;</span> &amp;&amp; docker rm <span class="string">&quot;<span class="variable">$containerName</span>&quot;</span></span><br><span class="line">        sudo sed -i <span class="string">&#x27;&#x27;</span> -e <span class="string">&quot;s/^127.*<span class="variable">$containerName</span>.local$//g&quot;</span> /etc/hosts</span><br><span class="line">        vhostFile=<span class="string">&quot;/private/etc/apache2/vhosts/<span class="variable">$containerName</span>.conf&quot;</span></span><br><span class="line">        <span class="keyword">if</span> [ -f <span class="string">&quot;<span class="variable">$vhostFile</span>&quot;</span> ]; <span class="keyword">then</span> sudo rm -f <span class="string">&quot;<span class="variable">$vhostFile</span>&quot;</span>; <span class="keyword">fi</span></span><br><span class="line">    <span class="keyword">fi</span></span><br><span class="line">  ;;</span><br><span class="line"><span class="keyword">esac</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="环境初始化脚本-install-sh"><a href="#环境初始化脚本-install-sh" class="headerlink" title="环境初始化脚本 install.sh"></a>环境初始化脚本 <code>install.sh</code></h5><p>因为自动化脚本对 <code>Apache</code> 有依赖, 只有一个工具脚本还不够, 需要一个脚本去初始化 <code>Mac</code> 自带的 <code>Apache</code>; 这里我还把需要使用到的 <code>Docker</code> 镜像初始化也放到了里面</p>
+<blockquote>
+<p>有跟朋友聊起这个工具, 他提供了一个全平台的解决方案, 在本地拉起一个 80 端口的 <code>Nginx</code>, 然后通过这个 <code>Nginx</code> 转发到其他项目的端口上; 这样就可以和宿主机完全隔离开, 后面如果有时间的话, 会有这一部分优化</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">set</span> -o errexit</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> [ <span class="string">&quot;<span class="subst">$(docker images -q base/php-openresty:2.0.1)</span>&quot;</span> = <span class="string">&quot;&quot;</span> ]; <span class="keyword">then</span></span><br><span class="line">  docker build -t base/php-openresty:2.0.1 --no-cache .</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line">sudo mkdir -p /private/etc/apache2/vhosts</span><br><span class="line">sudo cp /private/etc/apache2/httpd.conf /private/etc/apache2/httpd.conf.bak</span><br><span class="line"></span><br><span class="line">sudo sed -i <span class="string">&#x27;&#x27;</span> -e <span class="string">&#x27;s/^#\(LoadModule.*mod_proxy_http.so\)$/\1/g&#x27;</span> /private/etc/apache2/httpd.conf</span><br><span class="line">sudo sed -i <span class="string">&#x27;&#x27;</span> -e <span class="string">&#x27;s/^#\(LoadModule.*mod_proxy.so\)$/\1/g&#x27;</span> /private/etc/apache2/httpd.conf</span><br><span class="line">sudo sed -i <span class="string">&#x27;&#x27;</span> -e <span class="string">&#x27;s/^#\(LoadModule.*mod_ssl.so\)$/\1/g&#x27;</span> /private/etc/apache2/httpd.conf</span><br><span class="line">sudo sed -i <span class="string">&#x27;&#x27;</span> -e <span class="string">&#x27;s/^#\(LoadModule.*mod_vhost_alias.so\)$/\1/g&#x27;</span> /private/etc/apache2/httpd.conf</span><br><span class="line">sudo sed -i <span class="string">&#x27;&#x27;</span> -e <span class="string">&#x27;s/^#\(Include.*vhosts.conf\)$/\1/g&#x27;</span> /private/etc/apache2/httpd.conf</span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&#x27;Include /private/etc/apache2/vhosts/*.conf&#x27;</span> | sudo tee -a /private/etc/apache2/httpd.conf &gt; /dev/null</span><br><span class="line"><span class="built_in">echo</span> <span class="string">&#x27;SSLProxyEngine on&#x27;</span> | sudo tee -a /private/etc/apache2/httpd.conf &gt; /dev/null</span><br><span class="line"></span><br><span class="line">sudo apachectl restart</span><br><span class="line">cp php-link-tool.sh /usr/<span class="built_in">local</span>/bin/php-link-tool</span><br></pre></td></tr></table></figure>
+
+<h4 id="演示"><a href="#演示" class="headerlink" title="演示"></a>演示</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建一个新的 Lravel 项目</span></span><br><span class="line">composer create-project --prefer-dist laravel/laravel php-test <span class="string">&quot;5.*&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>进入到项目文件夹执行 <code>php-link-tool link</code> 然后通过 <code>docker ps</code> 查看所有容器, 就能看到一个新的 <code>php-test</code> 容器在运行, 通过浏览器请求 <code>http://php-test.local</code> 也是可以正常请求的</p>
+<p><img src="/images/php-link-tool-link-example.png" alt="image"><br><img src="/images/php-link-tool-link-browsers.png" alt="image"></p>
+<p>然后通过 <code>php-link-tool unlink</code> 就能移除这个项目</p>
+<p><img src="/images/php-link-tool-unlink-exmple.png" alt="image"></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Php/" rel="tag"># Php</a>
+              <a href="/tags/Mac/" rel="tag"># Mac</a>
+              <a href="/tags/Shell/" rel="tag"># Shell</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/posts/laravel-project-practice.html" rel="prev" title="Laravel/Lumen 在项目中的一些实践">
+      <i class="fa fa-chevron-left"></i> Laravel/Lumen 在项目中的一些实践
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9E%84%E5%BB%BA%E8%87%AA%E5%8A%A8%E5%8C%96%E5%B7%A5%E5%85%B7%E8%84%9A%E6%9C%AC"><span class="nav-number">1.</span> <span class="nav-text">构建自动化工具脚本</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%B7%A5%E5%85%B7%E8%84%9A%E6%9C%AC-php-link-tool-sh"><span class="nav-number">1.1.</span> <span class="nav-text">工具脚本 php-link-tool.sh</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%8E%AF%E5%A2%83%E5%88%9D%E5%A7%8B%E5%8C%96%E8%84%9A%E6%9C%AC-install-sh"><span class="nav-number">1.2.</span> <span class="nav-text">环境初始化脚本 install.sh</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%BC%94%E7%A4%BA"><span class="nav-number">2.</span> <span class="nav-text">演示</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Riley</p>
+  <div class="site-description" itemprop="description">A computer rookie blog that records something that he thinks is worthy of being recorded. It may be life, it may be work, or it may be a bug! ! !</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">20</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="mailto:junjiayy@gmail.com" title="E-Mail → mailto:junjiayy@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://github.com/Junjiayy" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Junjiayy" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://lydiadai.github.io/" title="https:&#x2F;&#x2F;lydiadai.github.io&#x2F;" rel="noopener" target="_blank">Lydia blog</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://hexo.iluoy.com/" title="https:&#x2F;&#x2F;hexo.iluoy.com&#x2F;" rel="noopener" target="_blank">Witty Panda</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Riley</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '7128ec0004a023b91abd',
+      clientSecret: '867efcae82773ee4dc23433aaf974fef99e70c8c',
+      repo        : 'Junjiayy.github.io',
+      owner       : 'junjia_yy@outlook.com',
+      admin       : ['Junjiayy'],
+      id          : '0c744208ebfb18e8c3ec0f07fa82079d',
+        language: 'zh-CN',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+</body>
+</html>

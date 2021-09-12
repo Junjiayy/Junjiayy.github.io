@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="对称加密作为最快速、最简单的加密方式, 所以被广泛的使用在很多加密协议的核心中. 但是对称加密也有一个致命的弱点, 那就是对称加密算法在加密和解密是需要使用到同一个 密钥; 当 A 和 B 两个人在需要进行加密数据的传输时, 如果他们使用的是对称加密算法, 那么必须有一端将 密钥 发送给另外一端. 在不安全的网络传输中这一点就是相当危险! 密钥 一旦被窃或拦截, 那么之前所做的加密就相当于已经失效">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Golang 实现的非对称加密">
+<meta property="og:url" content="http://example.com/posts/rsa-asymmetric-encryption.html">
+<meta property="og:site_name" content="Road to growth of rookie">
+<meta property="og:description" content="对称加密作为最快速、最简单的加密方式, 所以被广泛的使用在很多加密协议的核心中. 但是对称加密也有一个致命的弱点, 那就是对称加密算法在加密和解密是需要使用到同一个 密钥; 当 A 和 B 两个人在需要进行加密数据的传输时, 如果他们使用的是对称加密算法, 那么必须有一端将 密钥 发送给另外一端. 在不安全的网络传输中这一点就是相当危险! 密钥 一旦被窃或拦截, 那么之前所做的加密就相当于已经失效">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-02-17T04:54:00.000Z">
+<meta property="article:modified_time" content="2020-02-17T04:54:00.000Z">
+<meta property="article:author" content="Riley">
+<meta property="article:tag" content="golang">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/posts/rsa-asymmetric-encryption.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en-US'
+  };
+</script>
+
+  <title>Golang 实现的非对称加密 | Road to growth of rookie</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Road to growth of rookie</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">Meaningful life is called life</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en-US">
+    <link itemprop="mainEntityOfPage" href="http://example.com/posts/rsa-asymmetric-encryption.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Riley">
+      <meta itemprop="description" content="A computer rookie blog that records something that he thinks is worthy of being recorded. It may be life, it may be work, or it may be a bug! ! !">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Road to growth of rookie">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Golang 实现的非对称加密
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-02-17 12:54:00" itemprop="dateCreated datePublished" datetime="2020-02-17T12:54:00+08:00">2020-02-17</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>对称加密作为最快速、最简单的加密方式, 所以被广泛的使用在很多加密协议的核心中. 但是对称加密也有一个致命的弱点, 那就是对称加密算法在加密和解密是需要使用到同一个 <strong>密钥</strong>; 当 <code>A</code> 和 <code>B</code> 两个人在需要进行加密数据的传输时, 如果他们使用的是对称加密算法, 那么必须有一端将 <strong>密钥</strong> 发送给另外一端. 在不安全的网络传输中这一点就是相当危险! <strong>密钥</strong> 一旦被窃或拦截, 那么之前所做的加密就相当于已经失效.</p>
+<p>1976 年, 美国学者 <code>Dime</code> 和 <code>Henman</code> 为了解决信息公开传送和秘钥管理问题, 提出一种新的密钥交换协议, 允许在不安全媒体上的通信双方交换数据, 安全的达成一致的密钥, 这种密钥交换协议就被称为 “**公开密钥密码学 (Public-key cryptography)**”. 相对于 <strong>对称加密算法</strong> 这种方法也被叫做 <strong>非对称加密算法</strong>.</p>
+<p>非对称加密算法之所以可以规避对称加密的致命缺点, 就是因为非对称加密使用的是 <strong>一对</strong> 密钥, 而不是像对称加密一样使用 <strong>一个</strong> 密钥; 非对称加密的秘钥分为两个: 一个是 <strong>公钥</strong> (<code>public key</code>); 另一个则是 <strong>私钥</strong> (<code>private key</code>). <strong>私钥只由安全的一方保管, 不能外泄</strong>; 公钥则可以发给任何请求它的人. 非对称加密算法在加密时可以使用两个密钥中的任何一个, 但是在解密时则需要另外一个密钥才能解密. 比如: 使用公钥加密就需要私钥才能解密、使用私钥加密就需要公钥才能解密.</p>
+<span id="more"></span>
+
+<h4 id="RSA-非对称加密算法"><a href="#RSA-非对称加密算法" class="headerlink" title="RSA 非对称加密算法"></a><code>RSA</code> 非对称加密算法</h4><p>非对称加密的主要算法有: <code>RSA</code>、<code>Elgamal</code>、背包算法、<code>Rabin</code>、<code>D-H</code>、<code>ECC</code> (<strong>椭圆曲线加密算法</strong>), 其中 <code>RSA</code> 是被最广泛使用的一种非对称加密算法. <code>RSA</code> 是 1977 年由 <a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E7%BD%97%E7%BA%B3%E5%BE%B7%C2%B7%E6%9D%8E%E7%BB%B4%E6%96%AF%E7%89%B9">Ronald Linn Rivest</a>、<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E9%98%BF%E8%BF%AA%C2%B7%E8%90%A8%E8%8E%AB%E5%B0%94">Adi Shamir</a>、<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E4%BC%A6%E7%BA%B3%E5%BE%B7%C2%B7%E9%98%BF%E5%BE%B7%E6%9B%BC">Leonard Max Adleman</a> 三个人一起提出, <code>RSA</code> 就是他们三个人的姓氏首字母拼在一起组成的</p>
+<p><code>RSA</code> 跟对称加密比较, 更加复杂, 且更加消耗资源. 但是相对来说它的灵活性也更高; 到目前为止, 世界上还没有任何可靠的能够攻击 <code>RSA</code> 算法的方式. 只要其密钥长度足够长, 用 <code>RSA</code> 加密的数据实际上是不能破解的</p>
+<h5 id="ASN-1"><a href="#ASN-1" class="headerlink" title="ASN.1"></a><code>ASN.1</code></h5><p>在电信和计算机网络领域, <code>ASN.1</code> (<code>Abstract Syntax Notation One</code>) 是一套标准, 是描述数据的表示、编码、传输、解码的灵活的记法. 它提供了一套正式、无歧义和精确的规则以描述独立于特定计算机硬件的对象结构. 标准的 <code>ASN.1</code> 编码规则有: 基本编码规则 (<code>Basic Encoding Rules</code>) 简称 <code>BER</code>、规范编码规则 (<code>Canonical Encoding Rules</code>) 简称 <code>CER</code>、唯一编码规则 (<code>Distinguished Encoding Rules</code>) 简称 <code>DER</code>、压缩编码规则 (<code>Packed Encoding Rules</code>) 简称 <code>PER</code> 和 <code>XML</code> 编码规则 (<code>XML Encoding Rules</code>) 简称 <code>XER</code>. <a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/ASN.1">参考资料</a></p>
+<h5 id="X-509-数字证书标准"><a href="#X-509-数字证书标准" class="headerlink" title="X.509 数字证书标准"></a><code>X.509</code> 数字证书标准</h5><p><code>X.509</code> 是密码学里公钥证书的格式标准. <code>X.509</code> 证书已应用在包括 <code>TLS/SSL</code> 在内的众多网络协议里, 同时它也用在很多非在线应用场景里, 比如电子签名服务. <code>X.509</code> 证书里含有公钥、身份信息 (比如网络主机名，组织的名称或个体名称等) 和签名信息 (可以是证书签发机构CA的签名，也可以是自签名). 对于一份经由可信的证书签发机构签名或者可以通过其它方式验证的证书, 证书的拥有者就可以用证书及相应的私钥来创建安全的通信, 对文档进行数字签名. <code>X.509</code> 证书的结构是由 <code>ASN.1</code> 进行描述, 并使用 <code>ASN.1 DER</code> 编码规则编码</p>
+<h6 id="golang-实现-RSA-密钥对生成"><a href="#golang-实现-RSA-密钥对生成" class="headerlink" title="golang 实现 RSA 密钥对生成"></a><code>golang</code> 实现 <code>RSA</code> 密钥对生成</h6><figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;crypto/rand&quot;</span></span><br><span class="line">	<span class="string">&quot;crypto/rsa&quot;</span></span><br><span class="line">	<span class="string">&quot;crypto/x509&quot;</span></span><br><span class="line">	<span class="string">&quot;encoding/pem&quot;</span></span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">	<span class="string">&quot;os&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">generatePrinAndPubKeys</span><span class="params">(size <span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">	pri, err := rsa.GenerateKey(rand.Reader, size)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(fmt.Sprintf(<span class="string">&quot;generate rsa keys fail: %s&quot;</span>, err))</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	derTx := x509.MarshalPKCS1PrivateKey(pri)</span><br><span class="line">	block := pem.Block&#123;Type: <span class="string">&quot;RSA PRIVATE KEY&quot;</span>, Bytes: derTx&#125;</span><br><span class="line">	file, err := os.Create(<span class="string">&quot;private.pem&quot;</span>)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(fmt.Sprintf(<span class="string">&quot;create file fail: %s&quot;</span>, err))</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">defer</span> file.Close()</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> err := pem.Encode(file, &amp;block); err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(fmt.Sprintf(<span class="string">&quot;private key input file fail: %s&quot;</span>, err))</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	derstream, err := x509.MarshalPKIXPublicKey(&amp;pri.PublicKey)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(fmt.Sprintf(<span class="string">&quot;marshal public key fail: %s&quot;</span>, err))</span><br><span class="line">	&#125;</span><br><span class="line">	block = pem.Block&#123;Type: <span class="string">&quot;RSA PUBLIC KEY&quot;</span>, Bytes: derstream&#125;</span><br><span class="line">	pubFile, err := os.Create(<span class="string">&quot;public.pem&quot;</span>)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(fmt.Sprintf(<span class="string">&quot;create file fail: %s&quot;</span>, err))</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">defer</span> pubFile.Close()</span><br><span class="line">	<span class="keyword">if</span> err := pem.Encode(pubFile, &amp;block); err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(fmt.Sprintf(<span class="string">&quot;private key input file fail: %s&quot;</span>, err))</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	generatePrinAndPubKeys(<span class="number">1024</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h6 id="golang-实现-RSA-加解密"><a href="#golang-实现-RSA-加解密" class="headerlink" title="golang 实现 RSA 加解密"></a><code>golang</code> 实现 <code>RSA</code> 加解密</h6><figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;crypto/rand&quot;</span></span><br><span class="line">	<span class="string">&quot;crypto/rsa&quot;</span></span><br><span class="line">	<span class="string">&quot;crypto/x509&quot;</span></span><br><span class="line">	<span class="string">&quot;encoding/base64&quot;</span></span><br><span class="line">	<span class="string">&quot;encoding/pem&quot;</span></span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">	<span class="string">&quot;io/ioutil&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">publicKeyEncrypt</span><span class="params">(plainText []<span class="keyword">byte</span>, keyFile <span class="keyword">string</span>)</span> []<span class="title">byte</span></span> &#123;</span><br><span class="line">	content, err := ioutil.ReadFile(keyFile)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(fmt.Sprintf(<span class="string">&quot;read public key file fail: %s&quot;</span>, err))</span><br><span class="line">	&#125;</span><br><span class="line">	block, _ := pem.Decode(content)</span><br><span class="line">	pubInterface, err := x509.ParsePKIXPublicKey(block.Bytes)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(fmt.Sprintf(<span class="string">&quot;parse public key fail: %s&quot;</span>, err))</span><br><span class="line">	&#125;</span><br><span class="line">	pubKey := pubInterface.(*rsa.PublicKey)</span><br><span class="line">	cipherTxt, err := rsa.EncryptPKCS1v15(rand.Reader, pubKey, plainText)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(fmt.Sprintf(<span class="string">&quot;encrypt plain fail: %s&quot;</span>, err))</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> cipherTxt</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">privateKeyDecrypt</span><span class="params">(cipherTxt []<span class="keyword">byte</span>, keyFile <span class="keyword">string</span>)</span> []<span class="title">byte</span></span> &#123;</span><br><span class="line">	content, err := ioutil.ReadFile(keyFile)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(fmt.Sprintf(<span class="string">&quot;read private key file fail: %s&quot;</span>, err))</span><br><span class="line">	&#125;</span><br><span class="line">	block, _ := pem.Decode(content)</span><br><span class="line">	priKey, err := x509.ParsePKCS1PrivateKey(block.Bytes)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(fmt.Sprintf(<span class="string">&quot;parse private key fail: %s&quot;</span>, err))</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	plainTxt, err := rsa.DecryptPKCS1v15(rand.Reader, priKey, cipherTxt)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(fmt.Sprintf(<span class="string">&quot;decrypt cipher fail: %s&quot;</span>, err))</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> plainTxt</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span>  &#123;</span><br><span class="line">	txt := <span class="string">&quot;this is testing text&quot;</span></span><br><span class="line">	cipher := publicKeyEncrypt([]<span class="keyword">byte</span>(txt), <span class="string">&quot;public.pem&quot;</span>)</span><br><span class="line">	fmt.Printf(<span class="string">&quot;%v\n&quot;</span>, base64.StdEncoding.EncodeToString(cipher))</span><br><span class="line">	fmt.Printf(<span class="string">&quot;%s\n&quot;</span>, <span class="keyword">string</span>(privateKeyDecrypt(cipher, <span class="string">&quot;private.pem&quot;</span>)))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h6 id="golang-实现-RSA-数字签名和校验"><a href="#golang-实现-RSA-数字签名和校验" class="headerlink" title="golang 实现 RSA 数字签名和校验"></a><code>golang</code> 实现 <code>RSA</code> 数字签名和校验</h6><figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;crypto&quot;</span></span><br><span class="line">	<span class="string">&quot;crypto/rand&quot;</span></span><br><span class="line">	<span class="string">&quot;crypto/rsa&quot;</span></span><br><span class="line">	<span class="string">&quot;crypto/sha256&quot;</span></span><br><span class="line">	<span class="string">&quot;crypto/x509&quot;</span></span><br><span class="line">	<span class="string">&quot;encoding/pem&quot;</span></span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">	<span class="string">&quot;io/ioutil&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">signByRsa</span><span class="params">(priFile <span class="keyword">string</span>, plaintext []<span class="keyword">byte</span>)</span> []<span class="title">byte</span></span> &#123;</span><br><span class="line">	content, err := ioutil.ReadFile(priFile)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(fmt.Sprintf(<span class="string">&quot;read private key file fail: %s&quot;</span>, err))</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	derTxt, _ := pem.Decode(content)</span><br><span class="line">	priKey, err := x509.ParsePKCS1PrivateKey(derTxt.Bytes)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(fmt.Sprintf(<span class="string">&quot;parse private key fail: %s&quot;</span>, err))</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	h := sha256.New()</span><br><span class="line">	h.Write(plaintext)</span><br><span class="line"></span><br><span class="line">	hashed, err := rsa.SignPKCS1v15(rand.Reader, priKey, crypto.SHA256, h.Sum(<span class="literal">nil</span>))</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(fmt.Sprintf(<span class="string">&quot;sign plaintext fail: %s&quot;</span>, err))</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> hashed</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">verifyByRsa</span><span class="params">(pubFile <span class="keyword">string</span>, plaintext, sign []<span class="keyword">byte</span>)</span> <span class="title">bool</span></span> &#123;</span><br><span class="line">	content, err := ioutil.ReadFile(pubFile)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(fmt.Sprintf(<span class="string">&quot;read public key file fail: %s&quot;</span>, err))</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	derTxt, _ := pem.Decode(content)</span><br><span class="line">	pubInterface, err := x509.ParsePKIXPublicKey(derTxt.Bytes)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(fmt.Sprintf(<span class="string">&quot;parse public key fail: %s&quot;</span>, err))</span><br><span class="line">	&#125;</span><br><span class="line">	pubKey := pubInterface.(*rsa.PublicKey)</span><br><span class="line"></span><br><span class="line">	h := sha256.New()</span><br><span class="line">	h.Write(plaintext)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> err := rsa.VerifyPKCS1v15(pubKey, crypto.SHA256, h.Sum(<span class="literal">nil</span>), sign); err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> <span class="literal">true</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	txt := []<span class="keyword">byte</span>(<span class="string">&quot;this is testing text&quot;</span>)</span><br><span class="line">	sign := signByRsa(<span class="string">&quot;private.pem&quot;</span>, txt)</span><br><span class="line">	fmt.Printf(<span class="string">&quot;sign verify result: %v\n&quot;</span>, verifyByRsa(<span class="string">&quot;public.pem&quot;</span>, txt, sign))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>在 <code>golang</code> 中我没有找到可以使用 <strong>私钥</strong> 加密, <strong>公钥</strong> 解密的接口. 可能需要自己实现</p>
+</blockquote>
+<h5 id="椭圆曲线非对称加密算法"><a href="#椭圆曲线非对称加密算法" class="headerlink" title="椭圆曲线非对称加密算法"></a>椭圆曲线非对称加密算法</h5><p>椭圆曲线密码学 (<code>Elliptic Curve Cryptography</code>) 简称 <code>ECC</code>, 这是 <code>Golang</code> 实现的另外一种非对称加密算法, 它是一种基于 <strong>椭圆曲线数学</strong> 的公开密钥加密算法. <code>ECC</code> 的主要优势在于, 在某些情况下它比其他算法 (比如 <code>RSA</code>) 使用更小的密钥提供相当的或更高级的安全</p>
+<p><code>Golang</code> 标准包里并没有实现 <code>ECC</code> 的加密和解密, 只实现了基于 <code>ECC</code> 的数字签名和校验, 但是 以太坊 <code>go-ethereum</code> 中实现了 <code>ECC</code> 的加密和解密, 有兴趣的话可以参考一下</p>
+<h6 id="Golang-实现生成-ECC-密钥对"><a href="#Golang-实现生成-ECC-密钥对" class="headerlink" title="Golang 实现生成 ECC 密钥对"></a><code>Golang</code> 实现生成 <code>ECC</code> 密钥对</h6><figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;crypto/ecdsa&quot;</span></span><br><span class="line">	<span class="string">&quot;crypto/elliptic&quot;</span></span><br><span class="line">	<span class="string">&quot;crypto/rand&quot;</span></span><br><span class="line">	<span class="string">&quot;crypto/x509&quot;</span></span><br><span class="line">	<span class="string">&quot;encoding/pem&quot;</span></span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">	<span class="string">&quot;os&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">generatePriAndPubKeys</span><span class="params">(curve elliptic.Curve)</span></span>  &#123;</span><br><span class="line">	priKey, err := ecdsa.GenerateKey(curve, rand.Reader)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(fmt.Sprintf(<span class="string">&quot;generate private key fail: %s&quot;</span>, err))</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	derTxt, err := x509.MarshalECPrivateKey(priKey)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(fmt.Sprintf(<span class="string">&quot;marshal private key fail: %s&quot;</span>, err))</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	block := pem.Block&#123;Type: <span class="string">&quot;ECC PRIVATE KEY&quot;</span>, Bytes: derTxt&#125;</span><br><span class="line">	file, err := os.Create(<span class="string">&quot;ecc_private.pem&quot;</span>)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(fmt.Sprintf(<span class="string">&quot;create private key file fail: %s&quot;</span>, err))</span><br><span class="line">	&#125;</span><br><span class="line"> 	<span class="keyword">defer</span> file.Close()</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> err := pem.Encode(file, &amp;block); err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(fmt.Sprintf(<span class="string">&quot;write private key fail: %s&quot;</span>, err))</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	pubDerTxt, err := x509.MarshalPKIXPublicKey(&amp;priKey.PublicKey)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(fmt.Sprintf(<span class="string">&quot;marshal public key fail: %s&quot;</span>, err))</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	pubBlock := pem.Block&#123;Type: <span class="string">&quot;ECC PRIVATE KEY&quot;</span>, Bytes: pubDerTxt&#125;</span><br><span class="line">	pubFile, err := os.Create(<span class="string">&quot;ecc_public.pem&quot;</span>)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(fmt.Sprintf(<span class="string">&quot;create private key file fail: %s&quot;</span>, err))</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">defer</span> pubFile.Close()</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> err := pem.Encode(pubFile, &amp;pubBlock); err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(fmt.Sprintf(<span class="string">&quot;write private key fail: %s&quot;</span>, err))</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span>  &#123;</span><br><span class="line">	generatePriAndPubKeys(elliptic.P256())</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h6 id="golang-实现-ECC-数字签名和校验"><a href="#golang-实现-ECC-数字签名和校验" class="headerlink" title="golang 实现 ECC 数字签名和校验"></a><code>golang</code> 实现 <code>ECC</code> 数字签名和校验</h6><figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;crypto/ecdsa&quot;</span></span><br><span class="line">	<span class="string">&quot;crypto/rand&quot;</span></span><br><span class="line">	<span class="string">&quot;crypto/sha256&quot;</span></span><br><span class="line">	<span class="string">&quot;crypto/x509&quot;</span></span><br><span class="line">	<span class="string">&quot;encoding/pem&quot;</span></span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">	<span class="string">&quot;io/ioutil&quot;</span></span><br><span class="line">	<span class="string">&quot;math/big&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">signByEcc</span><span class="params">(priFile <span class="keyword">string</span>, plaintext []<span class="keyword">byte</span>)</span> <span class="params">(rTxt, sTxt []<span class="keyword">byte</span>)</span></span> &#123;</span><br><span class="line">	content, err := ioutil.ReadFile(priFile)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(fmt.Sprintf(<span class="string">&quot;read private key file fail: %s&quot;</span>, err))</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	block, _ := pem.Decode(content)</span><br><span class="line">	priKey, err := x509.ParseECPrivateKey(block.Bytes)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(fmt.Sprintf(<span class="string">&quot;parse private key fail: %s&quot;</span>, err))</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	h := sha256.New()</span><br><span class="line">	h.Write(plaintext)</span><br><span class="line"></span><br><span class="line">	r, s, err := ecdsa.Sign(rand.Reader, priKey, h.Sum(<span class="literal">nil</span>))</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(fmt.Sprintf(<span class="string">&quot;sign fail: %s&quot;</span>, err))</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	rTxt, _ = r.MarshalText()</span><br><span class="line">	sTxt, _ = s.MarshalText()</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> rTxt, sTxt</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">verifyByEcc</span><span class="params">(pubFile <span class="keyword">string</span>, plaintext, rTxt, sTxt []<span class="keyword">byte</span>)</span> <span class="title">bool</span></span> &#123;</span><br><span class="line">	content, err := ioutil.ReadFile(pubFile)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(fmt.Sprintf(<span class="string">&quot;read public key file fail: %s&quot;</span>, err))</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	block, _ := pem.Decode(content)</span><br><span class="line">	pubInterface, err := x509.ParsePKIXPublicKey(block.Bytes)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(fmt.Sprintf(<span class="string">&quot;parse public key fail: %s&quot;</span>, err))</span><br><span class="line">	&#125;</span><br><span class="line">	pubKey := pubInterface.(*ecdsa.PublicKey)</span><br><span class="line">	r, s := <span class="built_in">new</span>(big.Int), <span class="built_in">new</span>(big.Int)</span><br><span class="line">	<span class="keyword">if</span> err := r.UnmarshalText(rTxt); err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(fmt.Sprintf(<span class="string">&quot;unmarshal r fail: %s&quot;</span>, err))</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> err := s.UnmarshalText(sTxt); err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(fmt.Sprintf(<span class="string">&quot;unmarshal s fail: %s&quot;</span>, err))</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	h := sha256.New()</span><br><span class="line">	h.Write(plaintext)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> ecdsa.Verify(pubKey, h.Sum(<span class="literal">nil</span>), r, s)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	txt := []<span class="keyword">byte</span>(<span class="string">&quot;this is testing text&quot;</span>)</span><br><span class="line">	r, s := signByEcc(<span class="string">&quot;ecc_private.pem&quot;</span>, txt)</span><br><span class="line">	fmt.Printf(<span class="string">&quot;sign verify result: %v\n&quot;</span>, verifyByEcc(<span class="string">&quot;ecc_public.pem&quot;</span>, txt, r, s))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="参考和引用"><a href="#参考和引用" class="headerlink" title="参考和引用"></a>参考和引用</h4><ul>
+<li><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%85%AC%E9%92%A5%E5%AF%86%E7%A0%81%E5%AD%A6%E6%A0%87%E5%87%86">公钥密码学标准</a></li>
+<li><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/X.509">X.509</a></li>
+<li><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/ASN.1">ASN.1</a></li>
+<li><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/RSA%E5%8A%A0%E5%AF%86%E6%BC%94%E7%AE%97%E6%B3%95">RSA加密算法</a></li>
+<li><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%85%AC%E5%BC%80%E5%AF%86%E9%92%A5%E5%8A%A0%E5%AF%86">公开密钥加密</a></li>
+<li><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E6%A4%AD%E5%9C%86%E6%9B%B2%E7%BA%BF%E5%AF%86%E7%A0%81%E5%AD%A6">椭圆曲线密码学</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/golang/" rel="tag"># golang</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/posts/des-aes-symmetric-encrypt.html" rel="prev" title="DES/AES 对称加密">
+      <i class="fa fa-chevron-left"></i> DES/AES 对称加密
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/posts/redis-cluster.html" rel="next" title="Reids 的三种集群模式搭建和入门">
+      Reids 的三种集群模式搭建和入门 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#RSA-%E9%9D%9E%E5%AF%B9%E7%A7%B0%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95"><span class="nav-number">1.</span> <span class="nav-text">RSA 非对称加密算法</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#ASN-1"><span class="nav-number">1.1.</span> <span class="nav-text">ASN.1</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#X-509-%E6%95%B0%E5%AD%97%E8%AF%81%E4%B9%A6%E6%A0%87%E5%87%86"><span class="nav-number">1.2.</span> <span class="nav-text">X.509 数字证书标准</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#golang-%E5%AE%9E%E7%8E%B0-RSA-%E5%AF%86%E9%92%A5%E5%AF%B9%E7%94%9F%E6%88%90"><span class="nav-number">1.2.1.</span> <span class="nav-text">golang 实现 RSA 密钥对生成</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#golang-%E5%AE%9E%E7%8E%B0-RSA-%E5%8A%A0%E8%A7%A3%E5%AF%86"><span class="nav-number">1.2.2.</span> <span class="nav-text">golang 实现 RSA 加解密</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#golang-%E5%AE%9E%E7%8E%B0-RSA-%E6%95%B0%E5%AD%97%E7%AD%BE%E5%90%8D%E5%92%8C%E6%A0%A1%E9%AA%8C"><span class="nav-number">1.2.3.</span> <span class="nav-text">golang 实现 RSA 数字签名和校验</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%A4%AD%E5%9C%86%E6%9B%B2%E7%BA%BF%E9%9D%9E%E5%AF%B9%E7%A7%B0%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95"><span class="nav-number">1.3.</span> <span class="nav-text">椭圆曲线非对称加密算法</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#Golang-%E5%AE%9E%E7%8E%B0%E7%94%9F%E6%88%90-ECC-%E5%AF%86%E9%92%A5%E5%AF%B9"><span class="nav-number">1.3.1.</span> <span class="nav-text">Golang 实现生成 ECC 密钥对</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#golang-%E5%AE%9E%E7%8E%B0-ECC-%E6%95%B0%E5%AD%97%E7%AD%BE%E5%90%8D%E5%92%8C%E6%A0%A1%E9%AA%8C"><span class="nav-number">1.3.2.</span> <span class="nav-text">golang 实现 ECC 数字签名和校验</span></a></li></ol></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E5%92%8C%E5%BC%95%E7%94%A8"><span class="nav-number">2.</span> <span class="nav-text">参考和引用</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Riley</p>
+  <div class="site-description" itemprop="description">A computer rookie blog that records something that he thinks is worthy of being recorded. It may be life, it may be work, or it may be a bug! ! !</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">20</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="mailto:junjiayy@gmail.com" title="E-Mail → mailto:junjiayy@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://github.com/Junjiayy" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Junjiayy" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://lydiadai.github.io/" title="https:&#x2F;&#x2F;lydiadai.github.io&#x2F;" rel="noopener" target="_blank">Lydia blog</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://hexo.iluoy.com/" title="https:&#x2F;&#x2F;hexo.iluoy.com&#x2F;" rel="noopener" target="_blank">Witty Panda</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Riley</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '7128ec0004a023b91abd',
+      clientSecret: '867efcae82773ee4dc23433aaf974fef99e70c8c',
+      repo        : 'Junjiayy.github.io',
+      owner       : 'junjia_yy@outlook.com',
+      admin       : ['Junjiayy'],
+      id          : '93873e4d6d430c7f95f7b18b496100c9',
+        language: 'zh-CN',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1061 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="A computer rookie blog that records something that he thinks is worthy of being recorded. It may be life, it may be work, or it may be a bug! ! !">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Road to growth of rookie">
+<meta property="og:url" content="http://example.com/page/2/index.html">
+<meta property="og:site_name" content="Road to growth of rookie">
+<meta property="og:description" content="A computer rookie blog that records something that he thinks is worthy of being recorded. It may be life, it may be work, or it may be a bug! ! !">
+<meta property="og:locale" content="en_US">
+<meta property="article:author" content="Riley">
+<meta property="article:tag" content="Riley,Php,Linux,Laravel">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/page/2/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : true,
+    isPost : false,
+    lang   : 'en-US'
+  };
+</script>
+
+  <title>Road to growth of rookie</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Road to growth of rookie</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">Meaningful life is called life</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content index posts-expand">
+            
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en-US">
+    <link itemprop="mainEntityOfPage" href="http://example.com/posts/redis-cluster.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Riley">
+      <meta itemprop="description" content="A computer rookie blog that records something that he thinks is worthy of being recorded. It may be life, it may be work, or it may be a bug! ! !">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Road to growth of rookie">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/posts/redis-cluster.html" class="post-title-link" itemprop="url">Reids 的三种集群模式搭建和入门</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-03-10 01:11:00" itemprop="dateCreated datePublished" datetime="2020-03-10T01:11:00+08:00">2020-03-10</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>在开发中 <code>Reids</code> 是我们经常使用到的 <code>NoSql</code> 之一, 在生产环境中, 在某些特定的情况下 (例如: 给开发人员使用的只读库) 需要引入 <code>Redis</code> 的集群方案. <code>Redis</code> 支持三种集群方案: <strong>主从复制模式</strong>、<strong>Sentinel (哨兵) 模式</strong>、<strong>Cluster 模式</strong></p>
+<p><img src="/images/redis-cluster-desc-page.png" alt="image"></p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/posts/redis-cluster.html#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en-US">
+    <link itemprop="mainEntityOfPage" href="http://example.com/posts/rsa-asymmetric-encryption.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Riley">
+      <meta itemprop="description" content="A computer rookie blog that records something that he thinks is worthy of being recorded. It may be life, it may be work, or it may be a bug! ! !">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Road to growth of rookie">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/posts/rsa-asymmetric-encryption.html" class="post-title-link" itemprop="url">Golang 实现的非对称加密</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-02-17 12:54:00" itemprop="dateCreated datePublished" datetime="2020-02-17T12:54:00+08:00">2020-02-17</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>对称加密作为最快速、最简单的加密方式, 所以被广泛的使用在很多加密协议的核心中. 但是对称加密也有一个致命的弱点, 那就是对称加密算法在加密和解密是需要使用到同一个 <strong>密钥</strong>; 当 <code>A</code> 和 <code>B</code> 两个人在需要进行加密数据的传输时, 如果他们使用的是对称加密算法, 那么必须有一端将 <strong>密钥</strong> 发送给另外一端. 在不安全的网络传输中这一点就是相当危险! <strong>密钥</strong> 一旦被窃或拦截, 那么之前所做的加密就相当于已经失效.</p>
+<p>1976 年, 美国学者 <code>Dime</code> 和 <code>Henman</code> 为了解决信息公开传送和秘钥管理问题, 提出一种新的密钥交换协议, 允许在不安全媒体上的通信双方交换数据, 安全的达成一致的密钥, 这种密钥交换协议就被称为 “**公开密钥密码学 (Public-key cryptography)**”. 相对于 <strong>对称加密算法</strong> 这种方法也被叫做 <strong>非对称加密算法</strong>.</p>
+<p>非对称加密算法之所以可以规避对称加密的致命缺点, 就是因为非对称加密使用的是 <strong>一对</strong> 密钥, 而不是像对称加密一样使用 <strong>一个</strong> 密钥; 非对称加密的秘钥分为两个: 一个是 <strong>公钥</strong> (<code>public key</code>); 另一个则是 <strong>私钥</strong> (<code>private key</code>). <strong>私钥只由安全的一方保管, 不能外泄</strong>; 公钥则可以发给任何请求它的人. 非对称加密算法在加密时可以使用两个密钥中的任何一个, 但是在解密时则需要另外一个密钥才能解密. 比如: 使用公钥加密就需要私钥才能解密、使用私钥加密就需要公钥才能解密.</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/posts/rsa-asymmetric-encryption.html#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en-US">
+    <link itemprop="mainEntityOfPage" href="http://example.com/posts/des-aes-symmetric-encrypt.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Riley">
+      <meta itemprop="description" content="A computer rookie blog that records something that he thinks is worthy of being recorded. It may be life, it may be work, or it may be a bug! ! !">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Road to growth of rookie">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/posts/des-aes-symmetric-encrypt.html" class="post-title-link" itemprop="url">DES/AES 对称加密</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-02-11 15:16:00" itemprop="dateCreated datePublished" datetime="2020-02-11T15:16:00+08:00">2020-02-11</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p><strong>对称加密</strong> (<code>Symmetric-key algorithm</code>) 又被称为: 对称秘钥加密、私钥加密、共享密钥加密. 是密码学中一个种加密算法, 这类加密算法在加密和解密时需要使用到同一个秘钥. 根据不同的加密算法秘钥长度也不同, 一般在 64bit ~ 256bit 之间, 具体长度取决于所需的安全级别, 但是秘钥长度越长加密和解密所需要消耗的资源越多. 常用的对称加密算法有: <code>DES (Data Encrytion Standard)</code>、<code>3DES (Triple DES)</code>、<code>AES (Advanced Encryption Standard)</code> 等;</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/posts/des-aes-symmetric-encrypt.html#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en-US">
+    <link itemprop="mainEntityOfPage" href="http://example.com/posts/golang-progress-reload.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Riley">
+      <meta itemprop="description" content="A computer rookie blog that records something that he thinks is worthy of being recorded. It may be life, it may be work, or it may be a bug! ! !">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Road to growth of rookie">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/posts/golang-progress-reload.html" class="post-title-link" itemprop="url">Golang 进程热重启</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2019-11-05 18:21:03" itemprop="dateCreated datePublished" datetime="2019-11-05T18:21:03+08:00">2019-11-05</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>There are only 10 kinds of people in the world, one is a person who understands binary, and the other is a person who does not understand binary.</p>
+<p>代码需要升级; 配置文件需要更新. 如果在 <code>PHP</code> 中这些都很简单, 一个简单的 <code>vim</code> 或 <code>git pull</code> 就能解决. 可是像 <code>Golang</code> 这样的静态语言就无法做到像 <code>PHP</code> 中的那么灵活. 在线上的生产环境, 我们必须保证新老服务无缝交替. 如果贸然停掉服务, 就可能造成一些问题; 例如:</p>
+<ul>
+<li>旧的请求未完成, 服务端进程直接退出, 会造成客户端链接中断</li>
+<li>新的请求发送过来, 服务端还未完成重启, 造成 <code>connection refused</code></li>
+<li>旧的请求未处理完成, 服务端进程直接退出, 可能会造成用户数据不对称(即: 用户已完成一部分操作, 还要一部分未完成)</li>
+</ul>
+<p>当然; 这些问题都可以通过其他方法去规避. 例如使用负载均衡(如: <code>nginx</code>), 保证在升级的过程中始终有一个服务可用, 即各服务器依次灰度升级. 但是像 <code>nginx -s reload</code> 这种的方式, 好像更加方便</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/posts/golang-progress-reload.html#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en-US">
+    <link itemprop="mainEntityOfPage" href="http://example.com/posts/configure-nginx-https-certificate.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Riley">
+      <meta itemprop="description" content="A computer rookie blog that records something that he thinks is worthy of being recorded. It may be life, it may be work, or it may be a bug! ! !">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Road to growth of rookie">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/posts/configure-nginx-https-certificate.html" class="post-title-link" itemprop="url">使用阿里云 API 申请 Let’s Encrypt 泛域名免费 SSL 证书</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2019-09-19 17:44:45" itemprop="dateCreated datePublished" datetime="2019-09-19T17:44:45+08:00">2019-09-19</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2019-09-20 18:38:00" itemprop="dateModified" datetime="2019-09-20T18:38:00+08:00">2019-09-20</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>The Internet has made the world today, and today’s world has made the Internet</p>
+<p>最近帮朋友写了个小程序, 写完啦, 要测试啦. 没有 <code>https</code> 证书!! 我个人比较喜欢把测试代码放到自己的服务器上, 这样方便我自己修改 (PS: 自己的服务器嘛, 想怎么来怎么来). 所以得想办法整个 <code>https</code> 证书. 本来想看看网上有没有免费的, 一个不小心就 <code>Google</code> 到阿里云就有免费的证书. 刚好服务器是阿里的, 域名也是阿里的. 所以决定整一个用用</p>
+<h4 id="网站部署-HTTPS-的重要性"><a href="#网站部署-HTTPS-的重要性" class="headerlink" title="网站部署 HTTPS 的重要性"></a>网站部署 <code>HTTPS</code> 的重要性</h4><p>互联网造就了很多产业, 也造就了很多黑产业. 让我们想象一下: 当我们访问淘宝、京东的时候. 右下角漂浮着 “大家好我是渣渣辉, 是兄滴就来啃我”. 这种感觉肯定特别的酸爽 (PS: 哈哈哈哈哈, 要真是这样张家辉肯定还会火点). 或者我们再来想象一下: 当我们输入银行的网址后打算转账的时候, 卡号输了、密码输了、钱没到账不说, 银行卡里一分不剩, 这是不是就很悲哀了呢</p>
+<p>上举的两个例子其实是真实存在的. 在输入网址访问网页, 到网页返回数据给我们的过程中, 其实是分很多步骤的比如最基础的 <code>DNS</code> 解析 (PS: 不做详解). 如果在 <code>DNS</code> 解析的过程中被人劫持并注入一些东西, 就可能会出现上述的两种情况</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/posts/configure-nginx-https-certificate.html#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en-US">
+    <link itemprop="mainEntityOfPage" href="http://example.com/posts/vps-and-ssr-over-wall.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Riley">
+      <meta itemprop="description" content="A computer rookie blog that records something that he thinks is worthy of being recorded. It may be life, it may be work, or it may be a bug! ! !">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Road to growth of rookie">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/posts/vps-and-ssr-over-wall.html" class="post-title-link" itemprop="url">VPS + SSR 实现科学上网</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2019-09-18 23:50:38" itemprop="dateCreated datePublished" datetime="2019-09-18T23:50:38+08:00">2019-09-18</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>今天公司的梯子挂掉了我很伤心! 对于我这种不知道是几流的程序员不能 <code>Google</code> 实在是太难受了, 本来自己有一个付费的梯子奈何公司的速度快 (PS:白嫖真的太爽了). 靠人不如靠自己,所以我决定自己搭个梯子自己用,谁都不给! (PS:不能让我对象知道).</p>
+<ul>
+<li>真诚表态: <strong>梯子只是为了更好的学习, 不做不利于国家的事情</strong></li>
+</ul>
+<h4 id="选择-VPS"><a href="#选择-VPS" class="headerlink" title="选择 VPS"></a>选择 <code>VPS</code></h4><p><code>VPS</code> (<code>Virtual Private Server</code> 虚拟专用服务器), 说白了要搭梯子得先有个能访问国外资源的服务器不是, <code>VPS</code> 有很多选择: <a target="_blank" rel="noopener" href="https://aws.amazon.com/"><code>AWS</code></a>、<a target="_blank" rel="noopener" href="https://www.vultr.com/"><code>Vultr</code></a>、<a href="#">搬瓦工</a> 等.我这边直接选的是 <code>Vultr</code>, <code>Vultr</code> 是按小时收费的, 因为现在管控的比较严所以随时都有可能被强掉, 按小时计费的好处就是可以随时销毁随时创建. 当然从价格上来看 <strong>搬瓦工</strong> 是最便宜的, 大家可以根据自己的情况选择 <code>VPS</code>. 在我购买截止为止 <code>Vultr</code> 的服务器最低是 5 刀每个月 (PS: 一年也就三四百块钱, 我个人觉得还可以).</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/posts/vps-and-ssr-over-wall.html#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en-US">
+    <link itemprop="mainEntityOfPage" href="http://example.com/posts/hexo-install.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Riley">
+      <meta itemprop="description" content="A computer rookie blog that records something that he thinks is worthy of being recorded. It may be life, it may be work, or it may be a bug! ! !">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Road to growth of rookie">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/posts/hexo-install.html" class="post-title-link" itemprop="url">Hexo 搭配 Github pages 搭建个人博客</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2019-07-14 13:00:41" itemprop="dateCreated datePublished" datetime="2019-07-14T13:00:41+08:00">2019-07-14</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2019-07-15 12:59:00" itemprop="dateModified" datetime="2019-07-15T12:59:00+08:00">2019-07-15</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>作为一个 IT 行业的菜鸟，有的时候在网上浏览到一些好的技术文章，看过之后转头就忘记了，所以有一个自己的技术博客做一些记录是非常有必要的。但是个人博客虽然简单但是开发起来费时费力，而且如果要添加什么功能也非常的麻烦；SO 选一个开源的博客工具是一个非常好的办法。这里就记录一下使用 <code>Hexo</code> 和 <code>Github pages</code> 搭建个人博客的步骤、插件的集成和碰到的问题</p>
+<p>那么为什么要使用 <code>Github pages</code> 来搭建个人博客呢？</p>
+<ul>
+<li>支持绑定自己的域名</li>
+<li>提交网站等同于上传自己的代码</li>
+<li>提供免费的空间，而且就在自己的仓库里 (PS: 在服务器上维护自己的 Blog 真的很麻烦!!)</li>
+</ul>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/posts/hexo-install.html#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en-US">
+    <link itemprop="mainEntityOfPage" href="http://example.com/posts/laravel-changes-model-date-format.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Riley">
+      <meta itemprop="description" content="A computer rookie blog that records something that he thinks is worthy of being recorded. It may be life, it may be work, or it may be a bug! ! !">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Road to growth of rookie">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/posts/laravel-changes-model-date-format.html" class="post-title-link" itemprop="url">Laravel(Lumen) 5.X 修改时间字段为 INT 类型</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2019-07-11 17:35:43" itemprop="dateCreated datePublished" datetime="2019-07-11T17:35:43+08:00">2019-07-11</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>Our predecessors have already encountered problems we may encounter, so it is very important to learn efficient Google</p>
+<p><code>Laravel</code> 和 <code>Lumen</code> 框架会自动维护模型 (对应数据库表) 的 <code>created_at</code>、<code>updated_at</code> 和 <code>deleted_at</code> 字段，三个字段非常好用且被框架原生支持，如果要自己实现的话非常的麻烦。但是三个字段在数据库中默认都是 <code>timestamp</code> 或 <code>datetime</code> 类型的，记录一下将三个字段修改为 <code>int</code> 类型的过程。</p>
+<p>关于为什么要将 <code>datetime</code> 和 <code>timestamp</code> 两种时间类型替换成 <code>int</code> 类型，可以看一下 <strong>CSDN</strong> 上的这篇文章: <a target="_blank" rel="noopener" href="https://blog.csdn.net/adsadadaddadasda/article/details/78933784">MYSQL数据库时间字段INT, TIMESTAMP, DATETIME性能效率比较</a>。</p>
+<p><img src="/images/laravel-background.jpg" alt="laravel"></p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/posts/laravel-changes-model-date-format.html#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en-US">
+    <link itemprop="mainEntityOfPage" href="http://example.com/posts/nginx-log.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Riley">
+      <meta itemprop="description" content="A computer rookie blog that records something that he thinks is worthy of being recorded. It may be life, it may be work, or it may be a bug! ! !">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Road to growth of rookie">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/posts/nginx-log.html" class="post-title-link" itemprop="url">Nginx logs</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2019-07-01 23:32:51" itemprop="dateCreated datePublished" datetime="2019-07-01T23:32:51+08:00">2019-07-01</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>对于 <code>web</code> 服务器来说, 日志是不可缺少的一部分, 对于服务器排错、统计都很有用。<code>nginx</code> 的日志主要分为两种: <code>access_log</code> (访问日志) 和 <code>error_log</code> (错误日志)。通过访问日志我们可以获取到用户的 <code>IP</code> 地址、浏览器信息、请求处理时间等信息，而请求处理时间对于程序员来说是一个及其重要的东西, 毕竟它可以看出来你的代码烂不烂。错误日志记录了访问日志出错的信息, 可以帮我们快速定位错误的位置、原因等重要因素</p>
+<p><img src="/images/nginx-desc-page.jpg" alt="image"></p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/posts/nginx-log.html#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en-US">
+    <link itemprop="mainEntityOfPage" href="http://example.com/posts/hello-world.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Riley">
+      <meta itemprop="description" content="A computer rookie blog that records something that he thinks is worthy of being recorded. It may be life, it may be work, or it may be a bug! ! !">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Road to growth of rookie">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/posts/hello-world.html" class="post-title-link" itemprop="url">Hello World</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2019-07-01 14:32:51" itemprop="dateCreated datePublished" datetime="2019-07-01T14:32:51+08:00">2019-07-01</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>Welcome to <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a target="_blank" rel="noopener" href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a target="_blank" rel="noopener" href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a target="_blank" rel="noopener" href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
+<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/writing.html">Writing</a></p>
+<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
+
+<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/server.html">Server</a></p>
+<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
+
+<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/generating.html">Generating</a></p>
+<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
+
+<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/deployment.html">Deployment</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+
+  
+  <nav class="pagination">
+    <a class="extend prev" rel="prev" href="/"><i class="fa fa-angle-left" aria-label="Previous page"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span>
+  </nav>
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Riley</p>
+  <div class="site-description" itemprop="description">A computer rookie blog that records something that he thinks is worthy of being recorded. It may be life, it may be work, or it may be a bug! ! !</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">20</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="mailto:junjiayy@gmail.com" title="E-Mail → mailto:junjiayy@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://github.com/Junjiayy" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Junjiayy" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://lydiadai.github.io/" title="https:&#x2F;&#x2F;lydiadai.github.io&#x2F;" rel="noopener" target="_blank">Lydia blog</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://hexo.iluoy.com/" title="https:&#x2F;&#x2F;hexo.iluoy.com&#x2F;" rel="noopener" target="_blank">Witty Panda</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Riley</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+</body>
+</html>

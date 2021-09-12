@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="在开发中 Reids 是我们经常使用到的 NoSql 之一, 在生产环境中, 在某些特定的情况下 (例如: 给开发人员使用的只读库) 需要引入 Redis 的集群方案. Redis 支持三种集群方案: 主从复制模式、Sentinel (哨兵) 模式、Cluster 模式">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Reids 的三种集群模式搭建和入门">
+<meta property="og:url" content="http://example.com/posts/redis-cluster.html">
+<meta property="og:site_name" content="Road to growth of rookie">
+<meta property="og:description" content="在开发中 Reids 是我们经常使用到的 NoSql 之一, 在生产环境中, 在某些特定的情况下 (例如: 给开发人员使用的只读库) 需要引入 Redis 的集群方案. Redis 支持三种集群方案: 主从复制模式、Sentinel (哨兵) 模式、Cluster 模式">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/images/redis-cluster-desc-page.png">
+<meta property="og:image" content="http://example.com/images/redis-cluster-vbox.png">
+<meta property="og:image" content="http://example.com/images/redis-master-slave-example.png">
+<meta property="og:image" content="http://example.com/images/redis-cluster-vbox-sentinel.png">
+<meta property="og:image" content="http://example.com/images/redis-sentinel-status.png">
+<meta property="og:image" content="http://example.com/images/killed-redis-slaves-status.png">
+<meta property="og:image" content="http://example.com/images/killed-redis-sentinels-status.png">
+<meta property="article:published_time" content="2020-03-09T17:11:00.000Z">
+<meta property="article:modified_time" content="2020-03-09T17:11:00.000Z">
+<meta property="article:author" content="Riley">
+<meta property="article:tag" content="Redis">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/images/redis-cluster-desc-page.png">
+
+<link rel="canonical" href="http://example.com/posts/redis-cluster.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en-US'
+  };
+</script>
+
+  <title>Reids 的三种集群模式搭建和入门 | Road to growth of rookie</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Road to growth of rookie</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">Meaningful life is called life</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en-US">
+    <link itemprop="mainEntityOfPage" href="http://example.com/posts/redis-cluster.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Riley">
+      <meta itemprop="description" content="A computer rookie blog that records something that he thinks is worthy of being recorded. It may be life, it may be work, or it may be a bug! ! !">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Road to growth of rookie">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Reids 的三种集群模式搭建和入门
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-03-10 01:11:00" itemprop="dateCreated datePublished" datetime="2020-03-10T01:11:00+08:00">2020-03-10</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>在开发中 <code>Reids</code> 是我们经常使用到的 <code>NoSql</code> 之一, 在生产环境中, 在某些特定的情况下 (例如: 给开发人员使用的只读库) 需要引入 <code>Redis</code> 的集群方案. <code>Redis</code> 支持三种集群方案: <strong>主从复制模式</strong>、<strong>Sentinel (哨兵) 模式</strong>、<strong>Cluster 模式</strong></p>
+<p><img src="/images/redis-cluster-desc-page.png" alt="image"></p>
+<span id="more"></span>
+
+<blockquote>
+<p>准备三台虚拟机用于模拟 <code>Redis</code> 集群环境, 系统环境: <code>Ubuntu Server 18.04</code></p>
+</blockquote>
+<p><img src="/images/redis-cluster-vbox.png" alt="image"></p>
+<h4 id="安装-Redis-Server-和-Redis-Cli"><a href="#安装-Redis-Server-和-Redis-Cli" class="headerlink" title="安装 Redis Server 和 Redis Cli"></a>安装 <code>Redis Server</code> 和 <code>Redis Cli</code></h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># https://timelate.com/archives/install-redis-on-ubuntu.html</span></span><br><span class="line">sudo apt-get install software-properties-common -y</span><br><span class="line">sudo add-apt-repository ppa:chris-lea/redis-server -y</span><br><span class="line">sudo apt-get update &amp;&amp; sudo apt-get install redis-server redis-tools -y</span><br><span class="line">sudo redis-server -v</span><br></pre></td></tr></table></figure>
+
+<h4 id="主从复制模式"><a href="#主从复制模式" class="headerlink" title="主从复制模式"></a>主从复制模式</h4><p>主从复制模式下包含一台主数据库 (<code>master</code>) 和最少一台从数据库 <code>slave</code>. <code>slave</code> 启动后, 向 <code>master</code> 发送 <code>SYNC</code> 命令, <code>master</code> 接收到 <code>SYNC</code> 命令后通过 <code>bgsave</code> 保存快照 (<code>RDB</code> 持久化), 并使用缓冲区记录保存快照这段时间内执行的写命令; <code>master</code> 将保存的快找文件发送给 <code>slave</code>, 并继续执行执行的写明了; <code>slave</code> 接收到快照文件后, 加载快照文件并载入数据; <code>master</code> 在快照发送完成后开始向 <code>slave</code> 发送缓冲期的命令, <code>slave</code> 接收命令并执行, 完成复制初始化. 此后 <code>master</code> 每次执行一个写命令都会同步发送给 <code>slave</code>, 保持 <code>master</code> 和 <code>slave</code> 之间的数据一致性. </p>
+<p>修改 <code>master</code> 的配置文件 <code>sudo vim /etc/redis/redis.conf</code> 并重启服务 <code>sudo systemctl restart redis-server</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">bind</span> 0.0.0.0 <span class="comment"># 绑定监听的IP 0.0.0.0允许所有IP访问</span></span><br><span class="line">requirepass 123456 <span class="comment"># 密码</span></span><br></pre></td></tr></table></figure>
+
+<p>修改 <code>slave</code> 的配置文件 <code>sudo vim /etc/redis/redis.conf</code> 并重启服务 <code>sudo systemctl restart redis-server</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">bind</span> 0.0.0.0 <span class="comment"># 绑定监听的IP 0.0.0.0允许所有IP访问</span></span><br><span class="line">requirepass 123456 <span class="comment"># 密码</span></span><br><span class="line">replicaof 192.168.56.102 6379 <span class="comment"># master 的 IP 和端口</span></span><br><span class="line">masterauth 123456 <span class="comment"># master 密码</span></span><br></pre></td></tr></table></figure>
+
+<p><code>master</code> 和 <code>slave</code> 都配置后之后, 进入 <code>master</code> 写入一条数据, 立即访问 <code>slave</code> 查看, 或通过 <code>info replication</code> 命令也可以看到当前机器的主从状态</p>
+<p><img src="/images/redis-master-slave-example.png" alt="image"></p>
+<blockquote>
+<p>主从模式下 <code>master</code> 和 <code>slave</code> 之间的同步是以非阻塞的形式进行的, 同步期间, 客户端仍然可以提交查询和更新请求<br>主从模式不具备自动容错和恢复功能, <code>master</code> 或 <code>slave</code> 宕机都有可能导致客户端请求失败; 且难以支持在线扩容, <code>Redis</code> 的容量受限于单机配置</p>
+</blockquote>
+<h4 id="Sentinel-哨兵-模式"><a href="#Sentinel-哨兵-模式" class="headerlink" title="Sentinel (哨兵) 模式"></a><code>Sentinel</code> (哨兵) 模式</h4><p>哨兵模式基于主从复制模式, 只是引入了哨兵来监控与自动处理故障, 一旦发现问题能做出相应的应对处理, 其功能包括:</p>
+<blockquote>
+<p>注意: 因为哨兵模式 <strong>基于主从模式</strong>, 所以开启哨兵模式之前, 需要 <strong>先开启主从模式</strong></p>
+</blockquote>
+<ul>
+<li>监控 <code>master</code>、<code>slave</code> 是否正常运行</li>
+<li>当 <code>master</code> 出现故障时, 能自动将一个 <code>slave</code> 转换为 <code>master</code></li>
+<li>多个哨兵可以监控同一个 <code>Redis</code>, 哨兵之间也会自动监控</li>
+</ul>
+<p>当哨兵与 <code>master</code> 建立连接后, 会定期  向 <code>master</code> 和 <code>slave</code> 发送 <code>PING</code> 命令 (1s一次); 如果被 <code>PING</code> 的数据库或节点超时未回复, 哨兵会认为其主观下线, 如果下线的是 <code>master</code>, 哨兵会向其他哨兵发送命令询问是否也认为该 <code>master</code> 主观下线, 当一定数量的哨兵都认为该 <code>master</code> 主管下线后, 哨兵会认为该 <code>master</code> 已经客观下线</p>
+<p>当哨兵认为 <code>master</code> 客观下线时, 故障恢复的操作需要由选举的领头哨兵来执行, 选举通过 <code>Raft</code> 算法: 即发现 <code>master</code> 的哨兵节点向每个哨兵发送请求, 要求对方选自己为领头哨兵, 如果目标哨兵节点没有选过其他人, 则会同意当前请求; 如果超过一半的哨兵同意, 则发送请求的哨兵节点当选为领头哨兵; 如果多个哨兵节点同时参选, 可能存在一轮投票后无竞选者胜出, 此时每个参选的节点等待一个随机时间后再次发起参选请求, 直到选出领头哨兵</p>
+<p>选举出 <strong>领头哨兵</strong> 后, 会从下线的 <code>master</code> 的从库中挑选出一个当做新的 <code>master </code>; 挑出需要继任的 <code>slave</code> 后, <strong>领头哨兵</strong> 向该数据库发送命令使其升格 <code>为master</code>, 然后再向其他 <code>slave</code> 发送命令接受新的 <code>master</code>, 最后更新数据. 将已经停止的旧的 <code>master</code> 更新为新的 <code>master</code> 的从库, 使其恢复服务后以 <code>slave</code> 的身份继续运行</p>
+<p>为了模拟较为真实的生产环境, 多加两台虚拟机作为哨兵使用:</p>
+<p><img src="/images/redis-cluster-vbox-sentinel.png" alt="image"></p>
+<p>安装 <code>redis-sentinel</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo apt-get install redis-sentinel -y</span><br></pre></td></tr></table></figure>
+
+<p>修改两台 <code>sentinel</code> 机器配置: <code>sudo vim /etc/redis/sentinel.conf</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">bind 0.0.0.0 # 绑定监听的IP 0.0.0.0允许所有IP访问</span><br><span class="line">sentinel monitor mymaster 192.168.56.102 6379 1 # mymaster 定义一个 master 数据库的名称，后面是 master 的ip, port, 1 表示至少需要一个 Sentinel 进程同意才能将 master 判断为失效, 如果不满足这个条件, 则自动故障转移（failover）不会执行</span><br><span class="line">sentinel auth-pass mymaster 123456 # master 的密码</span><br><span class="line"></span><br><span class="line">sentinel down-after-milliseconds mymaster 5000 # 5s 未回复 PING, 则认为 master 主观下线，默认为 30s</span><br><span class="line">sentinel parallel-syncs mymaster 2  # 指定在执行故障转移时, 最多可以有多少个 slave 实例在同步新的 master 实例, 在 slave 实例较多的情况下这个数字越小, 同步的时间越长, 完成故障转移所需的时间就越长</span><br><span class="line">sentinel failover-timeout mymaster 300000 # 如果在该时间（ms）内未能完成故障转移操作, 则认为故障转移失败, 生产环境需要根据数据量设置该值</span><br></pre></td></tr></table></figure>
+
+<p>重启 <code>redis-sentinel</code> 服务之后, 可以通过 <code>redis-cli -p 26379</code> 连接到节点查看状态</p>
+<p><img src="/images/redis-sentinel-status.png" alt="image"></p>
+<p>在 <code>master</code> 执行以下命令关闭 <code>redis-server</code> 模拟 <code>master</code> 挂掉的场景, 然后进入 <code>slave</code> 中执行 <code>info replication</code> 查看两台 <code>slave</code> 的状态</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo systemctl stop redis-server</span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/killed-redis-slaves-status.png" alt="image"><br><img src="/images/killed-redis-sentinels-status.png" alt="image"></p>
+<p>杀死 <code>master</code> 后, 可以查看 <code>slave</code> 的状态可以看到, <code>slave2</code> 这台机器已经继任成了主库, 两台 <code>sentinel</code> 的对应的主库已经从 <code>192.168.56.102</code> 变成了 <code>192.168.56.105</code></p>
+<blockquote>
+<p>哨兵模式 <strong>基于主从模式</strong>, 但是相较于主从模式在 <code>master</code> 意外宕机后, 可以自动切换, 系统可用性更高<br>但是, 存在和组从模式存在一样的问题: 难以在线扩展、<code>Redis</code> 容量受单机限制; 并且, 需要额外的资源来启动 <code>Sentinel</code> 服务, 实现相对于复杂</p>
+</blockquote>
+<h4 id="Cluster-模式"><a href="#Cluster-模式" class="headerlink" title="Cluster 模式"></a><code>Cluster</code> 模式</h4><p>哨兵模式解决了主从复制不能自动故障转移, 达不到高可用的问题, 但还是存在难以在线扩容, <code>Redis</code> 容量受限于单机配置的问题. <code>Cluster</code> 模式实现了 <code>Redis</code> 的 分布式存储, <strong>即每台节点存储不同的内容</strong>, 来解决在线扩容的问题</p>
+<p><code>Cluster</code> 采用无中心结构, 所有的 <code>Redis</code> 节点彼此互联( <code>PING</code> 机制), 节点是否失效是通过集群中超过半数的节点检测失效时才生效. 客户端与 <code>Redis</code> 节点直连, 不需要中间代理层. 客户端不需要连接集群所有节点, <strong>只需要连接集群中任何一个可用节点</strong></p>
+<blockquote>
+<p><code>Cluster</code> 模式采用分布式存储, 在每个节点上, 都有一个插槽 (<code>slot</code>), 取值范围为 0-16383. 当存取 <code>key</code> 时, 节点会根据 <code>CRC16</code> 的算法得出一个结果, 然后把结果对 16384 求余, 求得的余被用来确定对应的数据存储在哪个节点中, 集群中的每个节点都存储了一份类似路由表的东西, 描述每个节点所拥有的 <code>Slots</code>; 当用户请求一个不在请求节点的 <code>key</code> 时, 它可以根据这个路由表找到正确的服务节点, 告知用户正确的服务节点</p>
+</blockquote>
+<blockquote>
+<p><code>Cluster</code> 模式集群节点最小配置 6 个节点(3 主 3 从, 因为需要半数以上), 其中主节点提供读写操作, 从节点作为备用节点, 不提供请求, 只作为故障转移使用。</p>
+</blockquote>
+<p>修改所有机器的配置文件 <code>sudo vim /etc/redis/redis.conf</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">bind</span> 0.0.0.0 <span class="comment"># 绑定监听的IP 0.0.0.0允许所有IP访问</span></span><br><span class="line">requirepass 123456 <span class="comment"># 密码</span></span><br><span class="line">cluster-enabled yes <span class="comment"># 开启集群模式 </span></span><br><span class="line">masterauth 123456 <span class="comment"># 如果设置了密码，需要指定master密码</span></span><br><span class="line">cluster-config-file nodes-xxx.conf <span class="comment"># 集群的配置文件</span></span><br><span class="line">cluster-node-timeout 15000 <span class="comment"># 请求超时 默认15秒，可自行设置</span></span><br></pre></td></tr></table></figure>
+
+<p>修改完所有机器的配置文件后, 使用 <code>redis-cli</code> 启动集群 </p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ redis-cli --cluster create --cluster-replicas 1 192.168.56.102:6379 192.168.56.103:6379 192.168.56.105:6379 192.168.56.106:6379 192.168.56.107:6379 192.168.56.108:6379 -a 123456</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Redis/" rel="tag"># Redis</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/posts/rsa-asymmetric-encryption.html" rel="prev" title="Golang 实现的非对称加密">
+      <i class="fa fa-chevron-left"></i> Golang 实现的非对称加密
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/posts/fastdfs-install-and-basics.html" rel="next" title="FastDFS 安装和入门">
+      FastDFS 安装和入门 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%89%E8%A3%85-Redis-Server-%E5%92%8C-Redis-Cli"><span class="nav-number">1.</span> <span class="nav-text">安装 Redis Server 和 Redis Cli</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E6%A8%A1%E5%BC%8F"><span class="nav-number">2.</span> <span class="nav-text">主从复制模式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Sentinel-%E5%93%A8%E5%85%B5-%E6%A8%A1%E5%BC%8F"><span class="nav-number">3.</span> <span class="nav-text">Sentinel (哨兵) 模式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Cluster-%E6%A8%A1%E5%BC%8F"><span class="nav-number">4.</span> <span class="nav-text">Cluster 模式</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Riley</p>
+  <div class="site-description" itemprop="description">A computer rookie blog that records something that he thinks is worthy of being recorded. It may be life, it may be work, or it may be a bug! ! !</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">20</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="mailto:junjiayy@gmail.com" title="E-Mail → mailto:junjiayy@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://github.com/Junjiayy" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Junjiayy" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://lydiadai.github.io/" title="https:&#x2F;&#x2F;lydiadai.github.io&#x2F;" rel="noopener" target="_blank">Lydia blog</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://hexo.iluoy.com/" title="https:&#x2F;&#x2F;hexo.iluoy.com&#x2F;" rel="noopener" target="_blank">Witty Panda</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Riley</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '7128ec0004a023b91abd',
+      clientSecret: '867efcae82773ee4dc23433aaf974fef99e70c8c',
+      repo        : 'Junjiayy.github.io',
+      owner       : 'junjia_yy@outlook.com',
+      admin       : ['Junjiayy'],
+      id          : '92655b6a901adfdc95f0bc4309c13030',
+        language: 'zh-CN',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+</body>
+</html>

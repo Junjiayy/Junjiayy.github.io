@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="对于 web 服务器来说, 日志是不可缺少的一部分, 对于服务器排错、统计都很有用。nginx 的日志主要分为两种: access_log (访问日志) 和 error_log (错误日志)。通过访问日志我们可以获取到用户的 IP 地址、浏览器信息、请求处理时间等信息，而请求处理时间对于程序员来说是一个及其重要的东西, 毕竟它可以看出来你的代码烂不烂。错误日志记录了访问日志出错的信息, 可以帮我们">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Nginx logs">
+<meta property="og:url" content="http://example.com/posts/nginx-log.html">
+<meta property="og:site_name" content="Road to growth of rookie">
+<meta property="og:description" content="对于 web 服务器来说, 日志是不可缺少的一部分, 对于服务器排错、统计都很有用。nginx 的日志主要分为两种: access_log (访问日志) 和 error_log (错误日志)。通过访问日志我们可以获取到用户的 IP 地址、浏览器信息、请求处理时间等信息，而请求处理时间对于程序员来说是一个及其重要的东西, 毕竟它可以看出来你的代码烂不烂。错误日志记录了访问日志出错的信息, 可以帮我们">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/images/nginx-desc-page.jpg">
+<meta property="article:published_time" content="2019-07-01T15:32:51.000Z">
+<meta property="article:modified_time" content="2019-07-01T15:32:51.000Z">
+<meta property="article:author" content="Riley">
+<meta property="article:tag" content="Linux">
+<meta property="article:tag" content="Nginx">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/images/nginx-desc-page.jpg">
+
+<link rel="canonical" href="http://example.com/posts/nginx-log.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en-US'
+  };
+</script>
+
+  <title>Nginx logs | Road to growth of rookie</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Road to growth of rookie</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">Meaningful life is called life</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en-US">
+    <link itemprop="mainEntityOfPage" href="http://example.com/posts/nginx-log.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Riley">
+      <meta itemprop="description" content="A computer rookie blog that records something that he thinks is worthy of being recorded. It may be life, it may be work, or it may be a bug! ! !">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Road to growth of rookie">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Nginx logs
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2019-07-01 23:32:51" itemprop="dateCreated datePublished" datetime="2019-07-01T23:32:51+08:00">2019-07-01</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>对于 <code>web</code> 服务器来说, 日志是不可缺少的一部分, 对于服务器排错、统计都很有用。<code>nginx</code> 的日志主要分为两种: <code>access_log</code> (访问日志) 和 <code>error_log</code> (错误日志)。通过访问日志我们可以获取到用户的 <code>IP</code> 地址、浏览器信息、请求处理时间等信息，而请求处理时间对于程序员来说是一个及其重要的东西, 毕竟它可以看出来你的代码烂不烂。错误日志记录了访问日志出错的信息, 可以帮我们快速定位错误的位置、原因等重要因素</p>
+<p><img src="/images/nginx-desc-page.jpg" alt="image"></p>
+<span id="more"></span>
+
+<h4 id="nginx-错误日志信息介绍"><a href="#nginx-错误日志信息介绍" class="headerlink" title="nginx 错误日志信息介绍"></a><code>nginx</code> 错误日志信息介绍</h4><p>配置记录 <code>nginx</code> 的错误信息是调试 <code>nginx</code> 服务的重要手段,属于核心功能模块 <code>ngx_core_module</code> 的参数,该参数名为 <code>error_log</code> ,可以放在 <code>Main</code> 区块中作为全局配置,也可以单独放在不同的虚拟主机中单独记录<br><br><code>error_log</code> 的语法格式及参数说明如下:<br></p>
+<table>
+<thead>
+<tr>
+<th>error_log</th>
+<th>file_path</th>
+<th>level</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>关键字</td>
+<td>日志文件路径</td>
+<td>错误级别</td>
+</tr>
+</tbody></table>
+<p>其中,关键字 <code>error_log</code> 不能改变,日志文件路径可以指定任意存放日志的目录,错误级别常见的有 <code>[debug|info|notice|warn|error|crit|alert|emerg]</code> ,级别越高纪录的信息越少,生产环境一般是 <code>[warn|error|crit]</code> 这三个级别之一</p>
+<blockquote>
+<p>注意:尽量不要配置 <code>info</code> 等较低级别的错误级别,这样会带来大量的 <code>I/O</code> 消耗</p>
+</blockquote>
+<p><code>error_log</code> 的默认值为:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">default: error_log logs/error.log error;</span><br></pre></td></tr></table></figure>
+<p>可以放置的标签段为</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">context: main; http; server; location</span><br></pre></td></tr></table></figure>
+
+<h4 id="nginx-访问日志介绍"><a href="#nginx-访问日志介绍" class="headerlink" title="nginx 访问日志介绍"></a><code>nginx</code> 访问日志介绍</h4><p><code>nginx</code> 会把每个用户访问网站的日志信息记录到自定的日志文件中,供网站提供者分析用户的浏览行为等。客户端向 <code>nginx</code> 服务器发起的每一次请求都会记录到访问日志中,客户端IP，浏览器信息, <code>referer</code>, 请求处理时间, 请求URL等都可以在访问日志中得到。当然具体要记录哪些信息，你可以通过 <code>log_format</code> 指令定义。此功能由 <code>ngx_http_log_module</code> 模块负责</p>
+<p><code>nginx</code> 访问日志语法:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">access_log path [format [buffer=size] [gzip[=level]] [flush=time] [if=condition]];</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>path</td>
+<td>指定日志的存放位置</td>
+</tr>
+<tr>
+<td>format</td>
+<td>用来定义记录日志的格式(可以定义多种日志格式,取不同的名字即可)</td>
+</tr>
+<tr>
+<td>access_log</td>
+<td>用来自定日志文件的路径及使用何种日志格式记录日志</td>
+</tr>
+<tr>
+<td>buffer</td>
+<td>用来指定日志写入时的缓存大小。默认是64k</td>
+</tr>
+<tr>
+<td>gzip</td>
+<td>日志写入前先进行压缩。压缩率可以指定，从1到9数值越大压缩比越高，同时压缩的速度也越慢。默认是1</td>
+</tr>
+<tr>
+<td>flush</td>
+<td>设置缓存的有效时间。如果超过flush指定的时间，缓存中的内容将被清空</td>
+</tr>
+<tr>
+<td>if</td>
+<td>条件判断。如果指定的条件计算为0或空字符串，那么该请求不会写入日志</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p>一般场景中,这些参数都不用配置,极端优化时才可能会考虑这些参数</p>
+</blockquote>
+<blockquote>
+<p><code>access_log off</code> 中的 <code>off</code> ,表示不记录访问日志</p>
+</blockquote>
+<h5 id="使用-log-format-自定义访问日志格式"><a href="#使用-log-format-自定义访问日志格式" class="headerlink" title="使用 log_format 自定义访问日志格式"></a>使用 <code>log_format</code> 自定义访问日志格式</h5><p>日志格式定义说明</p>
+<p>定义语法</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">log_format name [escape=default|json] string ...;</span><br></pre></td></tr></table></figure>
+
+<p>如下例:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">access_log /var/logs/nginx-access.log main</span><br><span class="line">log_format main &#x27;$remote_addr - $remote_user [$time_local] &quot;$request&quot; &#x27;</span><br><span class="line">                &#x27;$status $body_bytes_sent &quot;$http_referer&quot; &#x27;</span><br><span class="line">                &#x27;&quot;$http_user_agent&quot; &quot;$http_x_frowarded_for&quot;&#x27;</span><br></pre></td></tr></table></figure>
+
+<p>其中, <code>log_format</code> 为日志格式关键参数,不能随意改变。<br><code>main</code> 是为日志格式指定的标签,记录日志时会通过这个 <code>main</code> 标签选择指定的格式。标签后面跟着的都是可以记录的日志信息。</p>
+<p>具体日志参数信息如下:</p>
+<table>
+<thead>
+<tr>
+<th>nginx 日志变量</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>$remote_addr</td>
+<td>记录访问网站的客户端IP地址</td>
+</tr>
+<tr>
+<td>$http_x_forwarded_for</td>
+<td>当前端游代理服务器时,是指 Web 节点记录客户端地址的配置,此参数生效的前提是代理服务器上也进行了相关的 x_forwarded_for 设置</td>
+</tr>
+<tr>
+<td>$remote_user</td>
+<td>远程客户端名称</td>
+</tr>
+<tr>
+<td>$time_local</td>
+<td>记录访问时间与时区</td>
+</tr>
+<tr>
+<td>$request</td>
+<td>用户的 http 请求起始行信息</td>
+</tr>
+<tr>
+<td>$status</td>
+<td>http 状态码,记录请求返回的状态,例如:200、404、301 等</td>
+</tr>
+<tr>
+<td>$body_bytes_sents</td>
+<td>服务器发送给客户端的响应的 body 字节数</td>
+</tr>
+<tr>
+<td>$http_referer</td>
+<td>记录此次请求是从哪个链接访问过来的,可以根据 referer 进行防盗链设置</td>
+</tr>
+<tr>
+<td>$http_user_agent</td>
+<td>记录客户端访问信息,例如:浏览器、手机客户端等</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p>所有的日志段以空格分割,一行可以记录多个</p>
+</blockquote>
+<blockquote>
+<p>在没有特殊要求的情况下,采用默认配置即可,更多可以设置的目录日志信息的变量见 <a target="_blank" rel="noopener" href="http://nginx.org/en/docs/http/ngx_http_log_module.html">nginx日志变量</a></p>
+</blockquote>
+<p>访问日志可以放置的标签段为</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">context: http; server; location; if in location; limit_except</span><br></pre></td></tr></table></figure>
+
+<p><a target="_blank" rel="noopener" href="http://nginx.org/en/docs/http/ngx_http_log_module.html">更多内容参考 nginx 官方网站</a></p>
+<h4 id="nginx-日志切割"><a href="#nginx-日志切割" class="headerlink" title="nginx 日志切割"></a><code>nginx</code> 日志切割</h4><p>默认情况下 <code>nginx</code> 会把所有的访问日志生成到一个指定的访问日志文件 <code>access.log</code> 中,但这样一来,时间长了就导致日志文件内容过大,不利于日志的分析或处理,因此,一般做法会将 <code>nginx</code> 的访问日志按天或按小时进行分割,分成不同的文件保存。</p>
+<p>新建一个 <code>shell</code> 脚本 <code>cut_nginx_log.sh</code>,内容如下</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">!/bin/sh</span></span><br><span class="line">DateFormat=`date +%Y%m%d`</span><br><span class="line">LogDir=&quot;/application/nginx/logs&quot;</span><br><span class="line">LogName=&quot;access_default&quot;;</span><br><span class="line">[ -d $LogDir ] &amp;&amp; cd $LogDir || exit 1</span><br><span class="line">[ -f $&#123;LogName&#125;.log ] || exit 1</span><br><span class="line">/bin/mv $&#123;LogName&#125;.log $&#123;DateFormat&#125;_$&#123;LogName&#125;.log</span><br><span class="line">/bin/touch $&#123;LogName&#125;.log</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>脚本实现切割 <code>nginx</code> 日志的思想,是将正在写入的 <code>nginx</code> 日志 <code>access_defalut</code> 修改为带日期的的格式文件 <code>xxx_xx_xx_access_default</code>, 然后新建一个 <code>access_default</code> 文件</p>
+</blockquote>
+<p>通过定时任务的方式实现每日 00 点整定时执行 <code>cut_nginx_log.sh</code> 切割日志,将以下内容写入到 <code>/var/spool/cron/root</code> 中</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">#每日0点切割nginx日志 \</span><br><span class="line">00 00 * * * /bin/sh script_path/cut_nginx_log.sh &gt; /dev/null 2&gt;&amp;1</span><br></pre></td></tr></table></figure>
+
+<p>查看 <code>crontab</code> 是否添加成功</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ crontab -l</span><br><span class="line"></span><br><span class="line">#每日0点切割nginx日志 \</span><br><span class="line">00 00 * * * /bin/sh script_path/cut_nginx_log.sh &gt; /dev/null 2&gt;&amp;1</span><br></pre></td></tr></table></figure>
+
+
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Linux/" rel="tag"># Linux</a>
+              <a href="/tags/Nginx/" rel="tag"># Nginx</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/posts/hello-world.html" rel="prev" title="Hello World">
+      <i class="fa fa-chevron-left"></i> Hello World
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/posts/laravel-changes-model-date-format.html" rel="next" title="Laravel(Lumen) 5.X 修改时间字段为 INT 类型">
+      Laravel(Lumen) 5.X 修改时间字段为 INT 类型 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#nginx-%E9%94%99%E8%AF%AF%E6%97%A5%E5%BF%97%E4%BF%A1%E6%81%AF%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.</span> <span class="nav-text">nginx 错误日志信息介绍</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#nginx-%E8%AE%BF%E9%97%AE%E6%97%A5%E5%BF%97%E4%BB%8B%E7%BB%8D"><span class="nav-number">2.</span> <span class="nav-text">nginx 访问日志介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8-log-format-%E8%87%AA%E5%AE%9A%E4%B9%89%E8%AE%BF%E9%97%AE%E6%97%A5%E5%BF%97%E6%A0%BC%E5%BC%8F"><span class="nav-number">2.1.</span> <span class="nav-text">使用 log_format 自定义访问日志格式</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#nginx-%E6%97%A5%E5%BF%97%E5%88%87%E5%89%B2"><span class="nav-number">3.</span> <span class="nav-text">nginx 日志切割</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Riley</p>
+  <div class="site-description" itemprop="description">A computer rookie blog that records something that he thinks is worthy of being recorded. It may be life, it may be work, or it may be a bug! ! !</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">20</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="mailto:junjiayy@gmail.com" title="E-Mail → mailto:junjiayy@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://github.com/Junjiayy" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Junjiayy" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://lydiadai.github.io/" title="https:&#x2F;&#x2F;lydiadai.github.io&#x2F;" rel="noopener" target="_blank">Lydia blog</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://hexo.iluoy.com/" title="https:&#x2F;&#x2F;hexo.iluoy.com&#x2F;" rel="noopener" target="_blank">Witty Panda</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Riley</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '7128ec0004a023b91abd',
+      clientSecret: '867efcae82773ee4dc23433aaf974fef99e70c8c',
+      repo        : 'Junjiayy.github.io',
+      owner       : 'junjia_yy@outlook.com',
+      admin       : ['Junjiayy'],
+      id          : '666dea39d185fe598838049a1394a96f',
+        language: 'zh-CN',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="There are only 10 kinds of people in the world, one is a person who understands binary, and the other is a person who does not understand binary. 代码需要升级; 配置文件需要更新. 如果在 PHP 中这些都很简单, 一个简单的 vim 或 git pul">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Golang 进程热重启">
+<meta property="og:url" content="http://example.com/posts/golang-progress-reload.html">
+<meta property="og:site_name" content="Road to growth of rookie">
+<meta property="og:description" content="There are only 10 kinds of people in the world, one is a person who understands binary, and the other is a person who does not understand binary. 代码需要升级; 配置文件需要更新. 如果在 PHP 中这些都很简单, 一个简单的 vim 或 git pul">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/images/go-hot-reload-progress-ppid.png">
+<meta property="og:image" content="http://example.com/images/go-hot-reload-first-process.png">
+<meta property="og:image" content="http://example.com/images/go-hot-reload-child-process.png">
+<meta property="og:image" content="http://example.com/images/go-hot-reload-process-status.png">
+<meta property="og:image" content="http://example.com/images/go-hot-reload-child-process-status.png">
+<meta property="og:image" content="http://example.com/images/go-hot-reload-child-process-request.png">
+<meta property="og:image" content="http://example.com/images/go-hot-reload-restart-result.png">
+<meta property="og:image" content="http://example.com/images/go-hot-reload-ab-result.png">
+<meta property="article:published_time" content="2019-11-05T10:21:03.000Z">
+<meta property="article:modified_time" content="2019-11-05T10:21:03.000Z">
+<meta property="article:author" content="Riley">
+<meta property="article:tag" content="golang">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/images/go-hot-reload-progress-ppid.png">
+
+<link rel="canonical" href="http://example.com/posts/golang-progress-reload.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en-US'
+  };
+</script>
+
+  <title>Golang 进程热重启 | Road to growth of rookie</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Road to growth of rookie</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">Meaningful life is called life</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en-US">
+    <link itemprop="mainEntityOfPage" href="http://example.com/posts/golang-progress-reload.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Riley">
+      <meta itemprop="description" content="A computer rookie blog that records something that he thinks is worthy of being recorded. It may be life, it may be work, or it may be a bug! ! !">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Road to growth of rookie">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Golang 进程热重启
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2019-11-05 18:21:03" itemprop="dateCreated datePublished" datetime="2019-11-05T18:21:03+08:00">2019-11-05</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>There are only 10 kinds of people in the world, one is a person who understands binary, and the other is a person who does not understand binary.</p>
+<p>代码需要升级; 配置文件需要更新. 如果在 <code>PHP</code> 中这些都很简单, 一个简单的 <code>vim</code> 或 <code>git pull</code> 就能解决. 可是像 <code>Golang</code> 这样的静态语言就无法做到像 <code>PHP</code> 中的那么灵活. 在线上的生产环境, 我们必须保证新老服务无缝交替. 如果贸然停掉服务, 就可能造成一些问题; 例如:</p>
+<ul>
+<li>旧的请求未完成, 服务端进程直接退出, 会造成客户端链接中断</li>
+<li>新的请求发送过来, 服务端还未完成重启, 造成 <code>connection refused</code></li>
+<li>旧的请求未处理完成, 服务端进程直接退出, 可能会造成用户数据不对称(即: 用户已完成一部分操作, 还要一部分未完成)</li>
+</ul>
+<p>当然; 这些问题都可以通过其他方法去规避. 例如使用负载均衡(如: <code>nginx</code>), 保证在升级的过程中始终有一个服务可用, 即各服务器依次灰度升级. 但是像 <code>nginx -s reload</code> 这种的方式, 好像更加方便</p>
+<span id="more"></span>
+
+<h4 id="什么是-热启动"><a href="#什么是-热启动" class="headerlink" title="什么是 热启动"></a>什么是 <strong>热启动</strong></h4><p>热启动也可以叫平滑启动, 其思想就是新老程序 (<strong>进程</strong>) 无缝交替, 一直保持对客户端的服务, 让客户端感觉不到服务的重启. 且新程序启动之后所有新的请求会直接打到新程序, 老程序处理完旧请求之后(或超时)安全(或超时)退出.</p>
+<p>其实现原理就是拦截 <code>Linux</code> 的信号, 例如 <code>nginx -s reload</code> 就是给 <code>nginx</code> 发送一个表示 “注意: 我需要重启啦” 这样的信号. 当 <code>nginx</code> 接收到这样的信号的时候, 就会 <code>fork</code> 一个子进程, 并将父进程的 <code>socket</code> 句柄交给子进程 ,将新的请求打到子进程中, 父进程在处理完旧进程之后安全退出. 父进程安全退出之后, 子进程会被 <code>Linux</code> 的 <code>init</code> 进程领养成为新的 <code>nginx</code> 进程. 如此循环</p>
+<h5 id="Linux-Unix-下三个特殊进程和孤儿进程"><a href="#Linux-Unix-下三个特殊进程和孤儿进程" class="headerlink" title="Linux/Unix 下三个特殊进程和孤儿进程"></a>Linux/Unix 下三个特殊进程和孤儿进程</h5><p>在编写代码之前, 我们先来了解一下 <code>Linux/Unix</code> 下三个特殊的进程 <code>idle</code>、<code>init</code>、<code>kthreadd</code> 以及什么是 <strong>孤儿进程</strong> </p>
+<ul>
+<li><code>idle</code> 进程: </li>
+</ul>
+<p><code>PID</code> 为 0, 其前身是系统创建的第一个进程, 也是 <strong>唯一</strong> 一个不是被 <code>fork</code> 或 <code>kernel_thread</code> 创建的进程; 完成加载系统后, 演变为进程调度, 交换</p>
+<ul>
+<li><code>init</code> 进程: </li>
+</ul>
+<p><code>PID</code> 为 1, 由 <code>idle</code> 进程通过 <code>kernel_thread</code> 创建. 在内核空间初始化完成以后, 加载 <code>init</code> 进程. 在 <code>linux</code> 中所有进程都是由 <code>init</code> 进程创建并运行(PS: PID 为 0、1、2 的除外)的</p>
+<p><img src="/images/go-hot-reload-progress-ppid.png" alt="image"></p>
+<ul>
+<li><code>kthreadd</code> 进程: </li>
+</ul>
+<p><code>PID</code> 为 2, 也是由 <code>idel</code> 进程通过 <code>kernel_thread</code> 创建. <code>kthreadd</code> 进程始终运行在内核中, 它的任务就是管理和调度其他内核线程 <code>kernel_thread</code>, 它会 <strong>循环</strong> 执行一个 <code>kthread</code> 函数, 该函数的作用就是运行 <code>kthread_create_list</code> 全局链表中的 <code>kthread</code>. 当我们调用 <code>kernel_therad</code> 创建内核线程时, 该线程会被加入到 <code>kthread_create_list</code> 链表中, 所以所有的内核线程都是直接或间接的以 <code>kthreadd</code> 为父进程</p>
+<ul>
+<li><strong>孤儿进程</strong> : </li>
+</ul>
+<p>除 <code>idle</code> 进程以外的所有进程都有一个父进程(<code>init</code> 和 <code>kthreadd</code> 的父进程就是 <code>idle</code>), 但是进程是可以被 <strong>杀死</strong> 的.当一个进程退出, 而它有一个或多个进程还在运行, 那么这些子进程就会因为父进程被 <code>Kill</code> 掉变成没有父进程的进程, 这种进程我们就称为孤儿进程. 但是孤儿进程显然不符合 <code>Linux/Unix</code> 的进程规范. 所以在父进程表 <code>Kill</code> 掉以后, <code>init</code> 会领养这样的孤儿进程, 由 <code>init</code> 作为它们的父进程.</p>
+<h5 id="演示-孤儿进程-被-Init-收养"><a href="#演示-孤儿进程-被-Init-收养" class="headerlink" title="演示 孤儿进程 被 Init 收养"></a>演示 <strong>孤儿进程</strong> 被 <code>Init</code> 收养</h5><blockquote>
+<p>在 Unix 中, 创建进程是通过系统调用 <code>fork</code> 实现, 在 GO 语言中的 <code>Linux</code> 下创建进程使用的系统调用是 <code>clone</code>. 子进程几近于父进程的翻版, 子进程获得父进程的栈、数据段、堆和执行文本段的拷贝. 可以视为把父进程一分为二</p>
+</blockquote>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;flag&quot;</span></span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">	<span class="string">&quot;log&quot;</span></span><br><span class="line">	<span class="string">&quot;net&quot;</span></span><br><span class="line">	<span class="string">&quot;net/http&quot;</span></span><br><span class="line">	<span class="string">&quot;os&quot;</span></span><br><span class="line">	<span class="string">&quot;os/exec&quot;</span></span><br><span class="line">	<span class="string">&quot;syscall&quot;</span></span><br><span class="line">	<span class="string">&quot;time&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> Handler <span class="keyword">struct</span>&#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(handler *Handler)</span> <span class="title">ServeHTTP</span><span class="params">(w http.ResponseWriter, r *http.Request)</span></span> &#123;</span><br><span class="line">	fmt.Println(<span class="string">&quot;Request start at&quot;</span>, time.Now(), r.URL.Path+<span class="string">&quot;?&quot;</span>+r.URL.RawQuery, <span class="string">&quot;request done at&quot;</span>, time.Now(), <span class="string">&quot; pid:&quot;</span>, os.Getpid())</span><br><span class="line">	time.Sleep(<span class="number">5</span> * time.Second)</span><br><span class="line">	_, err := w.Write([]<span class="keyword">byte</span>(<span class="string">&quot;this is current request response&quot;</span>))</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;Current request failure:&quot;</span>, err.Error())</span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Println(<span class="string">&quot;Request done at&quot;</span>, time.Now(), <span class="string">&quot; pid:&quot;</span>, os.Getpid())</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> (</span><br><span class="line">		err      error</span><br><span class="line">		listener net.Listener</span><br><span class="line"></span><br><span class="line">		<span class="comment">// Pass the parameter on the command line to decide whether to fork a child process</span></span><br><span class="line">		<span class="comment">// If there is no parameter control, the child process will fork another process,</span></span><br><span class="line">		<span class="comment">// and the fork process will fork a child process.</span></span><br><span class="line">		<span class="comment">// This has been the fork child process, obviously this is not what we need</span></span><br><span class="line">		fork = flag.Bool(<span class="string">&quot;f&quot;</span>, <span class="literal">false</span>, <span class="string">&quot;Parameter determines whether to fork a child process&quot;</span>)</span><br><span class="line">	)</span><br><span class="line">	flag.Parse()</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> *fork &#123;</span><br><span class="line">		listener, err = net.Listen(<span class="string">&quot;tcp&quot;</span>, <span class="string">&quot;:10005&quot;</span>)</span><br><span class="line">		<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">			<span class="built_in">panic</span>(<span class="string">&quot;Listen port 10005 failure: &quot;</span> + err.Error())</span><br><span class="line">		&#125;</span><br><span class="line">		tcp, _ := listener.(*net.TCPListener)</span><br><span class="line">		fd, _ := tcp.File()</span><br><span class="line">		fmt.Printf(<span class="string">&quot;Current process fd: %v, filename: %v, %#v\n&quot;</span>, fd.Fd(), fd.Name(), listener)</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		f := os.NewFile(<span class="number">3</span>, <span class="string">&quot;&quot;</span>)</span><br><span class="line">		listener, err = net.FileListener(f)</span><br><span class="line">		<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">			<span class="built_in">panic</span>(fmt.Sprintf(<span class="string">&quot;Listen file %s failure fd: %v error: %s\n&quot;</span>, f.Name(), f.Fd(), err.Error()))</span><br><span class="line">		&#125;</span><br><span class="line">		fmt.Printf(<span class="string">&quot;Child process fd: %v, filemame: %v, %#v\n&quot;</span>, f.Fd(), f.Name(), listener)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	server := http.Server&#123;Handler: &amp;Handler&#123;&#125;, ReadTimeout: <span class="number">6</span> * time.Second&#125;</span><br><span class="line">	log.Println(<span class="string">&quot;Actual pid is &quot;</span>, syscall.Getpid())</span><br><span class="line">	log.Printf(<span class="string">&quot;Listener: %v \n&quot;</span>, listener)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> *fork &#123;</span><br><span class="line">		<span class="comment">// To make it easier to check the status of the process, fork child process after 10 seconds</span></span><br><span class="line">		timer := time.NewTimer(<span class="number">10</span> * time.Second)</span><br><span class="line">		<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">			&lt;- timer.C</span><br><span class="line">			tl, _ := listener.(*net.TCPListener)</span><br><span class="line">			currentFd, err := tl.File()</span><br><span class="line">			<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">				<span class="built_in">panic</span>(<span class="string">&quot;acquiring listener file failed&quot;</span>)</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="comment">// Here, you need to remove the parent process&#x27;s -f parameter to prevent the child process</span></span><br><span class="line">			<span class="comment">// from creating the child process.</span></span><br><span class="line">			cmd := exec.Command(os.Args[<span class="number">0</span>])</span><br><span class="line">			cmd.ExtraFiles, cmd.Stdout, cmd.Stderr = []*os.File&#123;currentFd&#125;, os.Stdout, os.Stderr</span><br><span class="line">			err = cmd.Start()</span><br><span class="line">			<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">				<span class="built_in">panic</span>(fmt.Sprintf(<span class="string">&quot;cmd.Start fail:%s&quot;</span>, err))</span><br><span class="line">			&#125;</span><br><span class="line">			fmt.Println(<span class="string">&quot;forked new pid: &quot;</span>, cmd.Process.Pid)</span><br><span class="line">		&#125;()</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	err = server.Serve(listener)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		log.Println(err)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>通过 <code>go build main.go</code> 编译后获得一个 <code>mian</code> 命令, 我们先来看一下在没有 <code>fork</code> <strong>子进程</strong> 之前的请求状态(加上 <code>-f</code> 参数):</p>
+<p><img src="/images/go-hot-reload-first-process.png" alt="image"></p>
+<p>服务启动后我通过 <code>curl http://127.0.0.1:10005</code> 发送了几个请求, 请求正常输出. 10秒之后 <strong>子进程</strong> 被 <code>fork</code> 出来之后 (PS:父进程还没有被杀掉) 我又发送了几个请求如下:</p>
+<p><img src="/images/go-hot-reload-child-process.png" alt="image"></p>
+<p>通过上面的图片我们可以看出, 两个进程都是在运行的且监听的是同一个端口, 两个进程都在请求. 通过 <code>ps -ef</code> 命令查看它们的进程状态如下:</p>
+<p><img src="/images/go-hot-reload-process-status.png" alt="image"></p>
+<p>在父进程还没有被杀死的时候, 子进程的 <code>PPID</code> 为父进程ID, 正常! 接下来 我们通过命令 <code>kill 4555</code> 杀死父进程, 查看子进程状态:</p>
+<p><img src="/images/go-hot-reload-child-process-status.png" alt="image"></p>
+<p>当父进程 4555 被杀死后, 子进程的 <code>PPID</code> 变成了 1. 跟我们上述的理论没有差别, 我们在通过 <code>curl</code> 尝试请求端口 10005 看是否存在差异:</p>
+<p><img src="/images/go-hot-reload-child-process-request.png" alt="image"></p>
+<blockquote>
+<p>os.NewFile(3, “”) 解析: os.NewFile 接收两个值, 一个为文件描述符(FD), 一个是文件名, 该函数并不是创建一个新的文件, 而是新建一个文件但是不保存返回文件指针.</p>
+</blockquote>
+<blockquote>
+<p>在 Linux 系统中一切都可以看成是文件, 文件可分为: 普通文件、目录文件、链接文件和设备文件. 文件描述符 (file descriptor) 是内核为了高效管理已打开文件所创建的索引, 为一个 <strong>非负整数</strong> (通常是一个小整数), 用于指代被打开的文件, 所有执行 <code>I/O</code> 操作的系统调用都需要用到文件描述符. 程序刚启动时: 0 为标准输入(stdio)、1 为标准输出(stdout)、2 是标准错误(stderr). 如果此时需要打开一个新文件, 那么它的描述符就是 3 (这里的打开包括创建). <strong><code>POSIX</code>标准要求每次打开文件时（含socket）必须使用当前进程中最小可用的文件描述符号码，因此，在网络通信过程中稍不注意就有可能造成串话</strong></p>
+</blockquote>
+<h4 id="实现热启动"><a href="#实现热启动" class="headerlink" title="实现热启动"></a>实现热启动</h4><p>通过上面的示例我们发现当父进程被杀死后, 子进程会被 <code>Init</code> 进程收养称为新的主进程, 那么我们就通过这种逻辑完成对新老服务的交替, 在子进程启动后且父进程处理完旧请求后安全退出父进程 (PS: 上述示例中, 在子进程启动后并没有关闭父进程的请求接收, 所有父进程和子进程都在处理请求, 在热启动中我们会关闭父进程请求接收).</p>
+<h5 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h5><p>修改代码如下:</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;context&quot;</span></span><br><span class="line">	<span class="string">&quot;flag&quot;</span></span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">	<span class="string">&quot;log&quot;</span></span><br><span class="line">	<span class="string">&quot;net&quot;</span></span><br><span class="line">	<span class="string">&quot;net/http&quot;</span></span><br><span class="line">	<span class="string">&quot;os&quot;</span></span><br><span class="line">	<span class="string">&quot;os/exec&quot;</span></span><br><span class="line">	<span class="string">&quot;os/signal&quot;</span></span><br><span class="line">	<span class="string">&quot;sync&quot;</span></span><br><span class="line">	<span class="string">&quot;syscall&quot;</span></span><br><span class="line">	<span class="string">&quot;time&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> Handler <span class="keyword">struct</span>&#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(handler *Handler)</span> <span class="title">ServeHTTP</span><span class="params">(w http.ResponseWriter, r *http.Request)</span></span> &#123;</span><br><span class="line">	fmt.Println(<span class="string">&quot;Request start at&quot;</span>, time.Now(), r.URL.Path+<span class="string">&quot;?&quot;</span>+r.URL.RawQuery, <span class="string">&quot;request done at&quot;</span>, time.Now(), <span class="string">&quot; pid:&quot;</span>, os.Getpid())</span><br><span class="line">	time.Sleep(<span class="number">5</span> * time.Second)</span><br><span class="line">	_, err := w.Write([]<span class="keyword">byte</span>(<span class="string">&quot;this is current request response&quot;</span>))</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;Current request failure:&quot;</span>, err.Error())</span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Println(<span class="string">&quot;Request done at&quot;</span>, time.Now(), <span class="string">&quot; pid:&quot;</span>, os.Getpid())</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> (</span><br><span class="line">		err      error</span><br><span class="line">		listener net.Listener</span><br><span class="line">		<span class="comment">// You need a wait group to wait for the current process (parent process) http service to shut down gracefully,</span></span><br><span class="line">		<span class="comment">// otherwise, after calling server.Shutdown, the main thread will stop blocking the entire process exit,</span></span><br><span class="line">		<span class="comment">// and the old requests that are not completed will be discarded</span></span><br><span class="line">		<span class="comment">// And this wait group must be a pointer (the data exists on the heap),</span></span><br><span class="line">		<span class="comment">// because we said before: The child process is the stack area of the shared parent process,</span></span><br><span class="line">		<span class="comment">// when the wait group exists on the stack, it will cause two processes to call a same one wait group</span></span><br><span class="line">		group    = <span class="built_in">new</span>(sync.WaitGroup)</span><br><span class="line">		graceful = flag.Bool(<span class="string">&quot;g&quot;</span>, <span class="literal">false</span>, <span class="string">&quot;When the service is started for the first time, &quot;</span>+</span><br><span class="line">			<span class="string">&quot;there is no need to perform hot restart related operations&quot;</span>)</span><br><span class="line">	)</span><br><span class="line">	flag.Parse()</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> *graceful &#123;</span><br><span class="line">		f := os.NewFile(<span class="number">3</span>, <span class="string">&quot;&quot;</span>)</span><br><span class="line">		listener, err = net.FileListener(f)</span><br><span class="line">		<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">			<span class="built_in">panic</span>(fmt.Sprintf(<span class="string">&quot;Listen file %s failure fd: %v error: %s\n&quot;</span>, f.Name(), f.Fd(), err.Error()))</span><br><span class="line">		&#125;</span><br><span class="line">		fmt.Printf(<span class="string">&quot;Child process fd: %v, filemame: %v, %#v\n&quot;</span>, f.Fd(), f.Name(), listener)</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		listener, err = net.Listen(<span class="string">&quot;tcp&quot;</span>, <span class="string">&quot;:10005&quot;</span>)</span><br><span class="line">		<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">			<span class="built_in">panic</span>(<span class="string">&quot;Listen port 10005 failure: &quot;</span> + err.Error())</span><br><span class="line">		&#125;</span><br><span class="line">		tcp, _ := listener.(*net.TCPListener)</span><br><span class="line">		fd, _ := tcp.File()</span><br><span class="line">		fmt.Printf(<span class="string">&quot;Current process fd: %v, filename: %v, %#v\n&quot;</span>, fd.Fd(), fd.Name(), listener)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	server := http.Server&#123;Handler: &amp;Handler&#123;&#125;, ReadTimeout: <span class="number">6</span> * time.Second&#125;</span><br><span class="line">	log.Println(<span class="string">&quot;Actual pid is &quot;</span>, syscall.Getpid())</span><br><span class="line">	log.Printf(<span class="string">&quot;Listener: %v \n&quot;</span>, listener)</span><br><span class="line"></span><br><span class="line">	group.Add(<span class="number">1</span>)</span><br><span class="line">	<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">(group *sync.WaitGroup)</span></span> &#123;</span><br><span class="line">		<span class="keyword">defer</span> group.Done()</span><br><span class="line">		signalChan := <span class="built_in">make</span>(<span class="keyword">chan</span> os.Signal, <span class="number">1</span>)</span><br><span class="line">		signal.Notify(signalChan, syscall.SIGHUP, syscall.SIGTERM)</span><br><span class="line"></span><br><span class="line">	ListenSignal:</span><br><span class="line">		<span class="keyword">for</span> &#123;</span><br><span class="line">			sig := &lt;-signalChan</span><br><span class="line">			<span class="comment">// Give the http service that needs to be gracefully shut down a timeout to</span></span><br><span class="line">			<span class="comment">// prevent the parent process from persisting</span></span><br><span class="line">			ctx, _ := context.WithTimeout(context.Background(), <span class="number">20</span>*time.Second)</span><br><span class="line">			<span class="keyword">switch</span> sig &#123;</span><br><span class="line">			<span class="keyword">case</span> syscall.SIGTERM, syscall.SIGHUP:</span><br><span class="line">				tl, _ := listener.(*net.TCPListener)</span><br><span class="line">				currentFd, err := tl.File()</span><br><span class="line">				<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">					<span class="built_in">panic</span>(<span class="string">&quot;acquiring listener file failed&quot;</span>)</span><br><span class="line">				&#125;</span><br><span class="line">				cmd := exec.Command(os.Args[<span class="number">0</span>], <span class="string">&quot;-g&quot;</span>)</span><br><span class="line">				cmd.ExtraFiles, cmd.Stdout, cmd.Stderr = []*os.File&#123;currentFd&#125;, os.Stdout, os.Stderr</span><br><span class="line">				err = cmd.Start()</span><br><span class="line">				<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">					<span class="built_in">panic</span>(fmt.Sprintf(<span class="string">&quot;cmd.Start fail:%s&quot;</span>, err))</span><br><span class="line">				&#125;</span><br><span class="line">				fmt.Println(<span class="string">&quot;forked new pid: &quot;</span>, cmd.Process.Pid)</span><br><span class="line"></span><br><span class="line">				<span class="comment">// When the child process fork is complete, close the http service of the parent process,</span></span><br><span class="line">				<span class="comment">// so the parent process will not receive new requests.</span></span><br><span class="line">				err = server.Shutdown(ctx)</span><br><span class="line">				<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">					fmt.Println(<span class="string">&quot;shutdown fail: &quot;</span>, err)</span><br><span class="line">				&#125;</span><br><span class="line"></span><br><span class="line">				<span class="comment">// After closing the parent process http service,</span></span><br><span class="line">				<span class="comment">// you need to jump out of the loop and stop monitoring the signal,</span></span><br><span class="line">				<span class="comment">// otherwise the parent process will still exist</span></span><br><span class="line">				<span class="keyword">break</span> ListenSignal</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;(group)</span><br><span class="line"></span><br><span class="line">	err = server.Serve(listener)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		log.Println(err)</span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Printf(<span class="string">&quot;Pid %d http server closed\n&quot;</span>, os.Getpid())</span><br><span class="line"></span><br><span class="line">	<span class="comment">// After calling server.Shutdown, server.Serve will stop blocking the main thread, </span></span><br><span class="line">	<span class="comment">// so here we need to wait for the old request to be processed or timed out</span></span><br><span class="line">	group.Wait()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="测试结果"><a href="#测试结果" class="headerlink" title="测试结果"></a>测试结果</h5><p>我通过 <code>ab</code> 测试, 发送了 100 个测试请求, 并在中间关闭了父进程, 结果如下:</p>
+<p><img src="/images/go-hot-reload-restart-result.png" alt="images"></p>
+<p><img src="/images/go-hot-reload-ab-result.png" alt="images"></p>
+<p>测试结果 OK, 没有请求失败的情况.</p>
+<h4 id="数据来源"><a href="#数据来源" class="headerlink" title="数据来源"></a>数据来源</h4><p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/sunsky303/p/9778466.html">Golang服务器热重启、热升级、热更新详解(有BUG, 主线程会一直监听信号, 不会退出)</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/gatieme/article/details/51532804">Linux下1号进程的前世(kernel_init)今生(init进程)—-Linux进程的管理与调度</a></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/golang/" rel="tag"># golang</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/posts/configure-nginx-https-certificate.html" rel="prev" title="使用阿里云 API 申请 Let’s Encrypt 泛域名免费 SSL 证书">
+      <i class="fa fa-chevron-left"></i> 使用阿里云 API 申请 Let’s Encrypt 泛域名免费 SSL 证书
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/posts/des-aes-symmetric-encrypt.html" rel="next" title="DES/AES 对称加密">
+      DES/AES 对称加密 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF-%E7%83%AD%E5%90%AF%E5%8A%A8"><span class="nav-number">1.</span> <span class="nav-text">什么是 热启动</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Linux-Unix-%E4%B8%8B%E4%B8%89%E4%B8%AA%E7%89%B9%E6%AE%8A%E8%BF%9B%E7%A8%8B%E5%92%8C%E5%AD%A4%E5%84%BF%E8%BF%9B%E7%A8%8B"><span class="nav-number">1.1.</span> <span class="nav-text">Linux&#x2F;Unix 下三个特殊进程和孤儿进程</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%BC%94%E7%A4%BA-%E5%AD%A4%E5%84%BF%E8%BF%9B%E7%A8%8B-%E8%A2%AB-Init-%E6%94%B6%E5%85%BB"><span class="nav-number">1.2.</span> <span class="nav-text">演示 孤儿进程 被 Init 收养</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0%E7%83%AD%E5%90%AF%E5%8A%A8"><span class="nav-number">2.</span> <span class="nav-text">实现热启动</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0"><span class="nav-number">2.1.</span> <span class="nav-text">代码实现</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95%E7%BB%93%E6%9E%9C"><span class="nav-number">2.2.</span> <span class="nav-text">测试结果</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E6%9D%A5%E6%BA%90"><span class="nav-number">3.</span> <span class="nav-text">数据来源</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Riley</p>
+  <div class="site-description" itemprop="description">A computer rookie blog that records something that he thinks is worthy of being recorded. It may be life, it may be work, or it may be a bug! ! !</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">20</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="mailto:junjiayy@gmail.com" title="E-Mail → mailto:junjiayy@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://github.com/Junjiayy" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Junjiayy" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://lydiadai.github.io/" title="https:&#x2F;&#x2F;lydiadai.github.io&#x2F;" rel="noopener" target="_blank">Lydia blog</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://hexo.iluoy.com/" title="https:&#x2F;&#x2F;hexo.iluoy.com&#x2F;" rel="noopener" target="_blank">Witty Panda</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Riley</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '7128ec0004a023b91abd',
+      clientSecret: '867efcae82773ee4dc23433aaf974fef99e70c8c',
+      repo        : 'Junjiayy.github.io',
+      owner       : 'junjia_yy@outlook.com',
+      admin       : ['Junjiayy'],
+      id          : '29d71375096d991fca51f089632d9177',
+        language: 'zh-CN',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+</body>
+</html>

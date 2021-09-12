@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="Any technical argument is necessary, even if you put forward a wrong idea, but this argument should stop at technology 今天中午干完饭, 去楼道抽烟, 看到我们产品一个 29 快 30 的大小伙子在那里, 极度郁闷, 卡卡的一根接一根的在那抽烟, 遍地烟头 (估计得抽了有半包).">
+<meta property="og:type" content="article">
+<meta property="og:title" content="关于产品与开发之间关系的一些吐槽和想法">
+<meta property="og:url" content="http://example.com/posts/product-and-developers-relation.html">
+<meta property="og:site_name" content="Road to growth of rookie">
+<meta property="og:description" content="Any technical argument is necessary, even if you put forward a wrong idea, but this argument should stop at technology 今天中午干完饭, 去楼道抽烟, 看到我们产品一个 29 快 30 的大小伙子在那里, 极度郁闷, 卡卡的一根接一根的在那抽烟, 遍地烟头 (估计得抽了有半包).">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-12-10T14:23:00.000Z">
+<meta property="article:modified_time" content="2020-12-10T14:23:00.000Z">
+<meta property="article:author" content="Riley">
+<meta property="article:tag" content="Riley,Php,Linux,Laravel">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/posts/product-and-developers-relation.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en-US'
+  };
+</script>
+
+  <title>关于产品与开发之间关系的一些吐槽和想法 | Road to growth of rookie</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Road to growth of rookie</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">Meaningful life is called life</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en-US">
+    <link itemprop="mainEntityOfPage" href="http://example.com/posts/product-and-developers-relation.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Riley">
+      <meta itemprop="description" content="A computer rookie blog that records something that he thinks is worthy of being recorded. It may be life, it may be work, or it may be a bug! ! !">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Road to growth of rookie">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          关于产品与开发之间关系的一些吐槽和想法
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-12-10 22:23:00" itemprop="dateCreated datePublished" datetime="2020-12-10T22:23:00+08:00">2020-12-10</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>Any technical argument is necessary, even if you put forward a wrong idea, but this argument should stop at technology</p>
+<p>今天中午干完饭, 去楼道抽烟, 看到我们产品一个 29 快 30 的大小伙子在那里, <strong>极度郁闷</strong>, 卡卡的一根接一根的在那抽烟, 遍地烟头 (估计得抽了有半包). </p>
+<p>事情起因是因为今天我们的后台被别人搞了, 衍生出觉得 <code>App</code> 也不太安全, 虽然我们本身是有接口加密的. 但是加密的算法采用的是 <code>RC4</code> 对称加密, 所以密钥是暴露在客户端的, 在拿到我们的包之后可以通过反编译的方式, 获取到加密的密钥</p>
+<p><code>iOS</code> 端针对这个问题, 把整个网络请求的库打包成了一个静态库加载到项目里, 但是这种做法遭到了 <code>Android</code> 端的极力反对 (主要是 <code>Android</code> 端负责人的极力反对). 按照他们的说法是, 安卓把整个网络请求库打包成一个静态库不是很方便</p>
+<span id="more"></span>
+
+<p><code>Android</code> 他们的意思是之前上加密他们就不是很赞同, 因为如果有人想搞我们的话, 完全不需要我们的密钥, 也不会通过反编的方式去破解我们包, 基于这一点, 他们觉得这个将整个网络请求库打包的需求成本高、收益小, 做起来很没有必要.</p>
+<blockquote>
+<p>对于安卓说的就算上了加密, 或者他们把整个网络请求哭打包成静态库, 还是可以通过反编译或者其他方式攻击我们的服务器, 这一点我是赞同的.<br>但是我并不认为这样做没有意义, 对于互联网项目来说, 没有绝对的安全, 我们做的所有跟安全有关的措施, 都只是在增加别人搞我们的成本而已</p>
+</blockquote>
+<p>安卓拒绝的理由, 产品理解起来就是: 这个需求太麻烦了, 我们 (PS: 安卓) 不想做而不是不能做</p>
+<p>那这矛盾就出来了嘛. 产品和安卓负责人两个人在会议室吵了一整个上午. 最后安卓那边也还是不做, 给产品整郁闷了.</p>
+<p>在绝大多数的互联网公司里, 开发和产品之间的关系都并不算友好, 开发在接到一个需求之后, 需要考虑东西有很多, 例如: 这个功能的扩展性、开发成本、 数据库怎么设计等; 但是有的时候这个需求其实只是产品在试错, 如果产品提出来的需求只是在试错, 试错的需求就需要经常改; </p>
+<p>改可以啊, 至少也得说出来为啥改是吧! 但是有的时候产品也只是一个传话工具, 老板说要改, 为啥? 不知道!! emmmmmm…. 这个就很尴尬; 或者说, 产品就是觉得不对, 哪里不对又说不上来, emmmmmm…, 对于开发来说就是脑壳疼</p>
+<p>碰到这种类似的问题, 我觉得不妨换个角度思考一下, 站在产品的位置上,去考虑一下这个问题. 就拿这次提到的加密强化的这个需求来讲; </p>
+<p>这应该是一个产品应该关心的问题吗? 我个人觉得不是, 这个问题是应该在产品提出来之前就应该处理好的, 开发在发现一个漏洞的时候, 或者明知道存在这个漏洞的情况下, 应该第一时间去想办法去修补这个漏洞, 而不是等产品提出这个需求; </p>
+<p>产品不是技术, 绝大部份产品也不会技术, 他们没有办法像开发一样去发现一些漏洞.</p>
+<p>还有试错这个问题, 也站在产品的位置上, 去看待一下, 一个功能, 需求来源无非就是那么几种: 借鉴竞品好的想法、产品觉得不错的想法、 上面压下来的需求</p>
+<p>不管需求的来源是哪一种, 产品怎么会知道这个功能, 是否能对项目产生一个正向的增长? 他肯定不知道啊. 所以在我看来产品的每一个需求都是在试错, 如果这个功能对项目产生了正向的增长, 那这个功能就是成功的; 反之, 这个功能对项目产生了负向的影响, 或者说这个功能没有达到产品的预期目标, 那么这个功能就需要改, 或是直接移除</p>
+<p>在我的职业生涯里, 我碰到的所有的开发都和和产品互怼过, 无关职位、年龄和岗位, 只要他是个技术就一定会怼产品. 如果你发现一个开发还没有怼过产品, 他一定是个新人, 对业务还不了解! </p>
+<p>作为服务端的负责人, 我鼓励我的组员对技术 (我认为 <strong>产品是不会技术的技术</strong>) 发起讨论. 可以争论, 甚至可以吵, 但是这种争论不应该掺杂个人感情, 虽然这很难. </p>
+<p>我个人比较推崇一句话: “任何技术上的争论都是有必要的, 哪怕你提出的是一个错误的想法, 但是这个争论应该止于技术”, 这, 也是我在跟别人争论 <strong>过后和之前</strong> 最常想的一句话</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/posts/git-usage-record.html" rel="prev" title="Git 使用记录和常用命令收集">
+      <i class="fa fa-chevron-left"></i> Git 使用记录和常用命令收集
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/posts/opcache-performance-tunin.html" rel="next" title="Opcache 最佳设置">
+      Opcache 最佳设置 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Riley</p>
+  <div class="site-description" itemprop="description">A computer rookie blog that records something that he thinks is worthy of being recorded. It may be life, it may be work, or it may be a bug! ! !</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">20</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="mailto:junjiayy@gmail.com" title="E-Mail → mailto:junjiayy@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://github.com/Junjiayy" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Junjiayy" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://lydiadai.github.io/" title="https:&#x2F;&#x2F;lydiadai.github.io&#x2F;" rel="noopener" target="_blank">Lydia blog</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://hexo.iluoy.com/" title="https:&#x2F;&#x2F;hexo.iluoy.com&#x2F;" rel="noopener" target="_blank">Witty Panda</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Riley</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '7128ec0004a023b91abd',
+      clientSecret: '867efcae82773ee4dc23433aaf974fef99e70c8c',
+      repo        : 'Junjiayy.github.io',
+      owner       : 'junjia_yy@outlook.com',
+      admin       : ['Junjiayy'],
+      id          : 'a68ec393afd4ff65150d4f7ee5163f9a',
+        language: 'zh-CN',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+</body>
+</html>
