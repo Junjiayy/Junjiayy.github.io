@@ -20,18 +20,24 @@
     var CONFIG = {"hostname":"example.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="A computer rookie blog that records something that he thinks is worthy of being recorded. It may be life, it may be work, or it may be a bug! ! !">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Road to growth of rookie">
-<meta property="og:url" content="http://example.com/archives/2021/03/index.html">
+  <meta name="description" content="用 VirtualBox 搞两台虚拟机, 打算运行一下数据库相关的测试. 配置好一台虚拟机后, 想要根据配置好的虚拟机为模板, 复制两个出来; 复制是复制出来了, 两台虚拟机 IP 地址是和 mac 地址都是一样的.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="工具使用记录">
+<meta property="og:url" content="http://example.com/posts/tools-use-records.html">
 <meta property="og:site_name" content="Road to growth of rookie">
-<meta property="og:description" content="A computer rookie blog that records something that he thinks is worthy of being recorded. It may be life, it may be work, or it may be a bug! ! !">
+<meta property="og:description" content="用 VirtualBox 搞两台虚拟机, 打算运行一下数据库相关的测试. 配置好一台虚拟机后, 想要根据配置好的虚拟机为模板, 复制两个出来; 复制是复制出来了, 两台虚拟机 IP 地址是和 mac 地址都是一样的.">
 <meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/images/virtualbox-copy-ips.png">
+<meta property="og:image" content="http://example.com/images/virtualbox-copy-dest-net-settings.png">
+<meta property="og:image" content="http://example.com/images/virtualbox-copy-dest-net-refresh.png">
+<meta property="article:published_time" content="2021-09-21T06:31:23.000Z">
+<meta property="article:modified_time" content="2021-09-21T06:31:23.000Z">
 <meta property="article:author" content="Riley">
-<meta property="article:tag" content="Riley,Php,Linux,Laravel">
+<meta property="article:tag" content="Mac">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/images/virtualbox-copy-ips.png">
 
-<link rel="canonical" href="http://example.com/archives/2021/03/">
+<link rel="canonical" href="http://example.com/posts/tools-use-records.html">
 
 
 <script id="page-configurations">
@@ -39,12 +45,12 @@
   CONFIG.page = {
     sidebar: "",
     isHome : false,
-    isPost : false,
+    isPost : true,
     lang   : 'en-US'
   };
 </script>
 
-  <title>Archive | Road to growth of rookie</title>
+  <title>工具使用记录 | Road to growth of rookie</title>
   
 
 
@@ -171,56 +177,102 @@
         <div class="content-wrap">
           
 
-          <div class="content archive">
+          <div class="content post posts-expand">
             
 
+    
   
   
-  
-  <div class="post-block">
-    <div class="posts-collapse">
-      <div class="collection-title">
-        <span class="collection-header">Um..! 23 posts in total. Keep on posting.</span>
-      </div>
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en-US">
+    <link itemprop="mainEntityOfPage" href="http://example.com/posts/tools-use-records.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Riley">
+      <meta itemprop="description" content="A computer rookie blog that records something that he thinks is worthy of being recorded. It may be life, it may be work, or it may be a bug! ! !">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Road to growth of rookie">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          工具使用记录
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2021-09-21 14:31:23" itemprop="dateCreated datePublished" datetime="2021-09-21T14:31:23+08:00">2021-09-21</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
 
       
-    <div class="collection-year">
-      <span class="collection-header">2021</span>
+        <p>用 <code>VirtualBox</code> 搞两台虚拟机, 打算运行一下数据库相关的测试. 配置好一台虚拟机后, 想要根据配置好的虚拟机为模板, 复制两个出来; 复制是复制出来了, 两台虚拟机 <code>IP</code> 地址是和 <code>mac</code> 地址都是一样的.</p>
+<span id="more"></span>
+
+<p><img src="/images/virtualbox-copy-ips.png" alt="images"></p>
+<blockquote>
+<p>VirtualBox 版本: 6.1.26, Linux 版本: Ubuntu 20.04</p>
+</blockquote>
+<p>复制好虚拟机后选择: 设置&gt;网络&gt;高级 重制一下 <code>mac</code> 地址</p>
+<p><img src="/images/virtualbox-copy-dest-net-settings.png" alt="images"></p>
+<p>重制好 <code>mac</code> 地址后, 进入到复制过来的虚拟机中, 修改文件 <code>sudo vim /etc/netplan/00-installer-config.yaml</code>, 找到你的网卡, 例如我的是: <code>enp0s3</code> 和 <code>enp0s8</code>; 替换对应内容为:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">network:</span><br><span class="line">  ethernets:</span><br><span class="line">    enp0s3:</span><br><span class="line">      dhcp4: <span class="literal">true</span></span><br><span class="line">      dhcp-identifier: mac</span><br><span class="line">    enp0s8:</span><br><span class="line">      dhcp4: <span class="literal">true</span></span><br><span class="line">      dhcp-identifier: mac</span><br><span class="line">  version: 2</span><br></pre></td></tr></table></figure>
+
+<p>执行命令 <code>sudo netplan apply</code> 重启网卡, 然后查看:</p>
+<p><img src="/images/virtualbox-copy-dest-net-refresh.png" alt="images"></p>
+
     </div>
 
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
+    
+    
+    
 
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2021-03-01T21:31:00+08:00"
-              content="2021-03-01">
-          03-01
-        </time>
-      </div>
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Mac/" rel="tag"># Mac</a>
+          </div>
 
-      <div class="post-title">
-          <a class="post-title-link" href="/posts/opcache-performance-tunin.html" itemprop="url">
-            <span itemprop="name">Opcache 最佳设置</span>
-          </a>
-      </div>
+        
 
-    </header>
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/posts/php-link-tool.html" rel="prev" title="MAC 环境下构建 PHP 自动化环境工具">
+      <i class="fa fa-chevron-left"></i> MAC 环境下构建 PHP 自动化环境工具
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/posts/db-benchmark-test-tools.html" rel="next" title="使用 Sysbench 对数据库进行压力测试">
+      使用 Sysbench 对数据库进行压力测试 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
   </article>
-
-
-    </div>
-  </div>
   
   
-  
-
   
 
 
 
           </div>
           
+    <div class="comments" id="gitalk-container"></div>
 
 <script>
   window.addEventListener('tabs:register', () => {
@@ -395,6 +447,25 @@
 
   
 
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '7128ec0004a023b91abd',
+      clientSecret: '867efcae82773ee4dc23433aaf974fef99e70c8c',
+      repo        : 'Junjiayy.github.io',
+      owner       : 'Junjiayy',
+      admin       : ['Junjiayy'],
+      id          : '8f258524e2f689f0b9af7cf98c67638b',
+        language: 'zh-CN',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
 
 </body>
 </html>

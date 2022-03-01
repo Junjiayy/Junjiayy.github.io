@@ -177,6 +177,210 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en-US">
+    <link itemprop="mainEntityOfPage" href="http://example.com/posts/php-link-tool-v2.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Riley">
+      <meta itemprop="description" content="A computer rookie blog that records something that he thinks is worthy of being recorded. It may be life, it may be work, or it may be a bug! ! !">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Road to growth of rookie">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/posts/php-link-tool-v2.html" class="post-title-link" itemprop="url">MAC 环境下构建 PHP 自动化环境工具 V2.0</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2021-10-05 14:09:12" itemprop="dateCreated datePublished" datetime="2021-10-05T14:09:12+08:00">2021-10-05</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>前段时间手撸一个 <code>PHP</code> 的本地自动化环境脚本, 跟朋友分享了一波之后收到了绝大多数的好评. 但是在实际使用的过程中还是有不少的问题, 因为刚入职了新公司也没有去升级, 今天刚好有空抽了两个小时升级了一下. </p>
+<p>实际使用中遇到的问题: </p>
+<ul>
+<li>依赖 <code>Mac</code> 自带的 <code>Apache</code>: 本来这个工具就是因为我懒得每次有个啥新项目都需要去重新部署本地环境, 虽然十分钟就能搞定, 但还是懒得搞, 所以本身就是为我自己本机环境定制的. 新公司配的电脑是 <code>Linux</code>, 诶!, 难受了, 就需要移植到 <code>Linux</code> 上</li>
+<li>域名 和 <code>Nginx</code> 中的 <code>root</code> 固定不可配: 本来想是为 <code>Laravel</code> 和 <code>Lumen</code> 定制的工具, 但是实际项目中有 <code>Yii</code> 的项目, 且一个项目可能有多个入口, 每次都只能手动去修改, 很不方便</li>
+</ul>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/posts/php-link-tool-v2.html#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en-US">
+    <link itemprop="mainEntityOfPage" href="http://example.com/posts/db-benchmark-test-tools.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Riley">
+      <meta itemprop="description" content="A computer rookie blog that records something that he thinks is worthy of being recorded. It may be life, it may be work, or it may be a bug! ! !">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Road to growth of rookie">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/posts/db-benchmark-test-tools.html" class="post-title-link" itemprop="url">使用 Sysbench 对数据库进行压力测试</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2021-10-02 18:32:27" itemprop="dateCreated datePublished" datetime="2021-10-02T18:32:27+08:00">2021-10-02</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>想要测试一下 <code>MySQL</code> <code>InnoDB</code> 和 <code>MyISAM</code> 两种引擎在不同状态下的查询效率, 之前使用过 <code>sysbench</code> 对 <code>InnoDB</code> 优化做过一波测试, 时间有点久, 对使用方式有点忘记了, 正好趁这个机会梳理一下; 也刚好对自定义脚本测试做一个简介.</p>
+<p><code>sysbench</code> 是一个跨平台的基准测试工具, 不仅支持数据库性能测试, 还支持测试 <code>CPU</code>性能、磁盘<code>IO</code>性能、调度程序性能、内存分配及传输速度、<code>POSIX</code>线程性能 测试; 本文主要对 <strong>数据库性能</strong> 测试做一个梳理</p>
+<blockquote>
+<p><code>MySQL</code> 其实自带了一个压力测试工具 <code>mysqlslap</code>, 但是对自定义测试不太友好. 但是在实际的项目中, 可能就是需要对现有的数据做测试, 所以 <code>sysbench</code> 的适用范围要比 <code>mysqlslap</code> 更广</p>
+</blockquote>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/posts/db-benchmark-test-tools.html#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en-US">
+    <link itemprop="mainEntityOfPage" href="http://example.com/posts/tools-use-records.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Riley">
+      <meta itemprop="description" content="A computer rookie blog that records something that he thinks is worthy of being recorded. It may be life, it may be work, or it may be a bug! ! !">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Road to growth of rookie">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/posts/tools-use-records.html" class="post-title-link" itemprop="url">工具使用记录</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2021-09-21 14:31:23" itemprop="dateCreated datePublished" datetime="2021-09-21T14:31:23+08:00">2021-09-21</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>用 <code>VirtualBox</code> 搞两台虚拟机, 打算运行一下数据库相关的测试. 配置好一台虚拟机后, 想要根据配置好的虚拟机为模板, 复制两个出来; 复制是复制出来了, 两台虚拟机 <code>IP</code> 地址是和 <code>mac</code> 地址都是一样的.</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/posts/tools-use-records.html#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en-US">
     <link itemprop="mainEntityOfPage" href="http://example.com/posts/php-link-tool.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -651,208 +855,10 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en-US">
-    <link itemprop="mainEntityOfPage" href="http://example.com/posts/add-mysql-master-slave.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Riley">
-      <meta itemprop="description" content="A computer rookie blog that records something that he thinks is worthy of being recorded. It may be life, it may be work, or it may be a bug! ! !">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Road to growth of rookie">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/posts/add-mysql-master-slave.html" class="post-title-link" itemprop="url">在线增加 MariaDB 主从</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              <time title="Created: 2020-07-05 12:13:00" itemprop="dateCreated datePublished" datetime="2020-07-05T12:13:00+08:00">2020-07-05</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>昨天晚上 <code>MySQL</code> 机器的 <code>CPU</code> 有点高, 感觉有点扛不住了. 新项目只是一个尝试性的项目, 不确定是否有市场, 所有并没有搭建主从</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/posts/add-mysql-master-slave.html#more" rel="contents">
-                Read more &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en-US">
-    <link itemprop="mainEntityOfPage" href="http://example.com/posts/composer-usage-record.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Riley">
-      <meta itemprop="description" content="A computer rookie blog that records something that he thinks is worthy of being recorded. It may be life, it may be work, or it may be a bug! ! !">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Road to growth of rookie">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/posts/composer-usage-record.html" class="post-title-link" itemprop="url">Composer 使用记录</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              <time title="Created: 2020-04-12 17:28:00" itemprop="dateCreated datePublished" datetime="2020-04-12T17:28:00+08:00">2020-04-12</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p><code>Composer</code> 是 <code>Composer</code> 用来管理依赖（<code>dependency</code>）关系的工具. <code>Composer</code> 通常情况下通过 <code>composer.json</code> 文件来配置和管理依赖的</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># mac 安装</span></span><br><span class="line">$ sudo curl -s https://getcomposer.org/installer | sudo php</span><br><span class="line">$ sudo chmod a+x composer.phar</span><br><span class="line">$ sudo mv composer.phar /usr/<span class="built_in">local</span>/bin/composer  &amp;&amp; composer --version</span><br><span class="line"><span class="comment"># 切换 composer 国内镜像</span></span><br><span class="line">$ composer config -g repo.packagist composer https://mirrors.aliyun.com/composer/</span><br></pre></td></tr></table></figure>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/posts/composer-usage-record.html#more" rel="contents">
-                Read more &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en-US">
-    <link itemprop="mainEntityOfPage" href="http://example.com/posts/fastdfs-install-and-basics.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Riley">
-      <meta itemprop="description" content="A computer rookie blog that records something that he thinks is worthy of being recorded. It may be life, it may be work, or it may be a bug! ! !">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Road to growth of rookie">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/posts/fastdfs-install-and-basics.html" class="post-title-link" itemprop="url">FastDFS 安装和入门</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              <time title="Created: 2020-03-23 13:11:00" itemprop="dateCreated datePublished" datetime="2020-03-23T13:11:00+08:00">2020-03-23</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>在传统的项目中计算机通过文件系统存储数据. 而现在各种微服务、负载均衡横行的时代, 文件会被多台服务器访问, 造成数据文件不能被存储在本地文件系统中.</p>
-<p>传统的解决方法一般会有一台专门存储文件的服务器, 业务服务器的文件存储会通过 <code>ftp</code> 或 <code>ssh</code> 的方式上传到文件服务上. 这种方式被称为 <strong>网络文件系统</strong> 即 <code>NFS</code> (<code>Network File System</code>), 但是 <code>NFS</code> 在使用中也存在: 大量的访问磁盘 <code>IO</code>、存在单点故障、存储空间不足等缺点</p>
-<p>为了解决 <code>NFS</code> 的缺点 <strong>分布式文件系统</strong> 即 <code>DFS</code> (<code>Distributed File System</code>) 应运而生. 分布式文件系统可以有效的解决数据的存储和管理难题; <code>DFS</code> 将固定某一地点的某个文件系统, 扩展到任意多个地点/多个文件系统, 众多节点组成一个文件系统网络. 每个节点可以分布在不同的地点, 通过网络进行节点间的通信和数据传输. 在使用分布式文件系统时, 无需关心数据是存储在哪个节点上、或者是从哪个节点从获取的, 只需要像使用本地文件系统一样管理和存储文件系统中的数据.</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/posts/fastdfs-install-and-basics.html#more" rel="contents">
-                Read more &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="Next page"></i></a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="Next page"></i></a>
   </nav>
 
 
@@ -918,7 +924,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">20</span>
+          <span class="site-state-item-count">23</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>

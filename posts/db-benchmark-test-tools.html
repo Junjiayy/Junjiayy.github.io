@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="想要测试一下 MySQL InnoDB 和 MyISAM 两种引擎在不同状态下的查询效率, 之前使用过 sysbench 对 InnoDB 优化做过一波测试, 时间有点久, 对使用方式有点忘记了, 正好趁这个机会梳理一下; 也刚好对自定义脚本测试做一个简介. sysbench 是一个跨平台的基准测试工具, 不仅支持数据库性能测试, 还支持测试 CPU性能、磁盘IO性能、调度程序性能、内存分配及传输">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用 Sysbench 对数据库进行压力测试">
+<meta property="og:url" content="http://example.com/posts/db-benchmark-test-tools.html">
+<meta property="og:site_name" content="Road to growth of rookie">
+<meta property="og:description" content="想要测试一下 MySQL InnoDB 和 MyISAM 两种引擎在不同状态下的查询效率, 之前使用过 sysbench 对 InnoDB 优化做过一波测试, 时间有点久, 对使用方式有点忘记了, 正好趁这个机会梳理一下; 也刚好对自定义脚本测试做一个简介. sysbench 是一个跨平台的基准测试工具, 不仅支持数据库性能测试, 还支持测试 CPU性能、磁盘IO性能、调度程序性能、内存分配及传输">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2021-10-02T10:32:27.000Z">
+<meta property="article:modified_time" content="2021-10-02T10:32:27.000Z">
+<meta property="article:author" content="Riley">
+<meta property="article:tag" content="MySQL">
+<meta property="article:tag" content="MariaDB">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/posts/db-benchmark-test-tools.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en-US'
+  };
+</script>
+
+  <title>使用 Sysbench 对数据库进行压力测试 | Road to growth of rookie</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Road to growth of rookie</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">Meaningful life is called life</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en-US">
+    <link itemprop="mainEntityOfPage" href="http://example.com/posts/db-benchmark-test-tools.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Riley">
+      <meta itemprop="description" content="A computer rookie blog that records something that he thinks is worthy of being recorded. It may be life, it may be work, or it may be a bug! ! !">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Road to growth of rookie">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          使用 Sysbench 对数据库进行压力测试
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2021-10-02 18:32:27" itemprop="dateCreated datePublished" datetime="2021-10-02T18:32:27+08:00">2021-10-02</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>想要测试一下 <code>MySQL</code> <code>InnoDB</code> 和 <code>MyISAM</code> 两种引擎在不同状态下的查询效率, 之前使用过 <code>sysbench</code> 对 <code>InnoDB</code> 优化做过一波测试, 时间有点久, 对使用方式有点忘记了, 正好趁这个机会梳理一下; 也刚好对自定义脚本测试做一个简介.</p>
+<p><code>sysbench</code> 是一个跨平台的基准测试工具, 不仅支持数据库性能测试, 还支持测试 <code>CPU</code>性能、磁盘<code>IO</code>性能、调度程序性能、内存分配及传输速度、<code>POSIX</code>线程性能 测试; 本文主要对 <strong>数据库性能</strong> 测试做一个梳理</p>
+<blockquote>
+<p><code>MySQL</code> 其实自带了一个压力测试工具 <code>mysqlslap</code>, 但是对自定义测试不太友好. 但是在实际的项目中, 可能就是需要对现有的数据做测试, 所以 <code>sysbench</code> 的适用范围要比 <code>mysqlslap</code> 更广</p>
+</blockquote>
+<span id="more"></span>
+
+<h5 id="安装-sysbench-和基本使用方法"><a href="#安装-sysbench-和基本使用方法" class="headerlink" title="安装 sysbench 和基本使用方法"></a>安装 <code>sysbench</code> 和基本使用方法</h5><blockquote>
+<p>本文使用测试机器配置: 系统: Ubuntu 20.04; MySQL: MariaDB 10.5; 系统配置: 1核2G</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ curl -s https://packagecloud.io/install/repositories/akopytov/sysbench/script.deb.sh | sudo bash</span><br><span class="line">$ sudo apt -y install sysbench</span><br></pre></td></tr></table></figure>
+
+<p>安装好之后我们先运行一个简单的示例, 对工具的使用有一个基本的了解</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line">$ sysbench --db-driver=mysql --mysql-user=root \</span><br><span class="line">	--mysql-password=test123456 --mysql-db=tests --threads=1 \</span><br><span class="line">	--events=100 --time=10 --rate=0 --report-interval=0  \</span><br><span class="line">	/usr/share/sysbench/bulk_insert.lua run</span><br><span class="line"></span><br><span class="line">sysbench 1.0.20 (using system LuaJIT 2.1.0-beta3)</span><br><span class="line"></span><br><span class="line">Running the <span class="built_in">test</span> with following options:</span><br><span class="line">Number of threads: 1</span><br><span class="line">Initializing random number generator from current time</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">Initializing worker threads...</span><br><span class="line"></span><br><span class="line">Threads started!</span><br><span class="line"></span><br><span class="line">SQL statistics:</span><br><span class="line">    queries performed:</span><br><span class="line">        <span class="built_in">read</span>:                            0  <span class="comment"># 读取数据执行次数</span></span><br><span class="line">        write:                           1  <span class="comment"># 写入数据执行次数</span></span><br><span class="line">        other:                           0  <span class="comment"># 其他操作执行次数</span></span><br><span class="line">        total:                           1  <span class="comment"># 总执行次数</span></span><br><span class="line">    transactions:                        100    (15675.30 per sec.) <span class="comment"># 事务执行次数    	(每秒事务次数)</span></span><br><span class="line">    queries:                             1      (156.75 per sec.)   <span class="comment"># 查询执行次数    	(每秒查询次数)</span></span><br><span class="line">    ignored errors:                      0      (0.00 per sec.)     <span class="comment"># 忽略错误数      (每秒忽略错误次数)</span></span><br><span class="line">    reconnects:                          0      (0.00 per sec.)     <span class="comment"># 数据库重连次数	(每秒重连次数)	</span></span><br><span class="line"></span><br><span class="line">General statistics:</span><br><span class="line">    total time:                          0.0043s	<span class="comment"># 总允许时间</span></span><br><span class="line">    total number of events:              100		<span class="comment"># 总执行事件次数</span></span><br><span class="line"></span><br><span class="line">Latency (ms):</span><br><span class="line">         min:                                    0.00 	<span class="comment"># 最小请求响应时间</span></span><br><span class="line">         avg:                                    0.00 	<span class="comment"># 平均请求响应时间</span></span><br><span class="line">         max:                                    0.19 	<span class="comment"># 最大请求响应时间</span></span><br><span class="line">         95th percentile:                        0.00 	<span class="comment"># 95%请求响应时间</span></span><br><span class="line">         sum:                                    0.33 	<span class="comment"># 总请求响应时间</span></span><br><span class="line"></span><br><span class="line">Threads fairness:</span><br><span class="line">    events (avg/stddev):           100.0000/0.00 	<span class="comment"># 执行的事件总数</span></span><br><span class="line">    execution time (avg/stddev):   0.0003/0.00 		<span class="comment"># 执行耗时</span></span><br></pre></td></tr></table></figure>
+
+<p>命令格式:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sysbench [options]... testname <span class="built_in">command</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p><code>testname</code> 说明: 需要运行的测试类型, 可以内置的测试, 也可以是自定的 <code>lua</code> 脚本; 内置测试有: <code>fileio</code> (文件 <code>I/O</code> 测试)、<code>cpu</code> (<code>CPU</code> 性能测试)、<code>memory</code> (内存测试)、<code>threads</code> (<code>POSIX</code> 线程性能测试、<code>mutex</code> (调度程序性能测试)、</p>
+</li>
+<li><p><code>command</code> 说明: <code>command</code> 是传递给 <code>testname</code> 的内置名称或制定的自定义脚本的, 只有 <code>run</code> 命令是所有内置测试和脚本都支持的, 自定义脚本可以自定义自己特有的命令; 一般 <code>prepare</code> 代表测试前资源准备, 例如: 创建测试表, 写入测试数据等; <code>run</code> 代表开始执行测试; <code>cleanup</code> 代表清除创建的测试数据, 例如: <code>prepare</code> 创建的测试表、测试数据等; <code>help</code> 查看内置测试或自定义脚本的使用帮助</p>
+</li>
+</ul>
+<p>常用 <code>options</code> 参数选项:</p>
+<table>
+<thead>
+<tr>
+<th>参数名</th>
+<th>参数说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>–db-driver</td>
+<td><code>mysql</code> 或 <code>pgsql</code>, 数据库驱动, 默认 <code>mysql</code></td>
+</tr>
+<tr>
+<td>–mysql-user</td>
+<td><code>MySQL</code> 用户名, 默认值 <code>sbtest</code></td>
+</tr>
+<tr>
+<td>–mysql-port</td>
+<td><code>MySQL</code> 端口, 默认值 3306</td>
+</tr>
+<tr>
+<td>–mysql-password</td>
+<td><code>MySQL</code> 登陆密码, 默认值为空</td>
+</tr>
+<tr>
+<td>–mysql-db</td>
+<td><code>MySQL</code> 测试库名称, 默认值 <code>sbtest</code></td>
+</tr>
+<tr>
+<td>–threads</td>
+<td>并发线程数, 默认值为 1</td>
+</tr>
+<tr>
+<td>–events</td>
+<td>希望测试事件运行的总次数</td>
+</tr>
+<tr>
+<td>–time</td>
+<td>当前测试总执行时间, 默认值 10, 单位秒</td>
+</tr>
+<tr>
+<td>–rate</td>
+<td>平均事务速率, 0 表示不限制, 默认 0</td>
+</tr>
+<tr>
+<td>–report-interval</td>
+<td>设置定期报告中间统计的时间间隔, 0 表示不设置, 默认值 0</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p>其他参数可以通过 <code>sysbench --help</code> 查看.</p>
+<p>注意: 如果当前时间已到达 <code>--time</code> 设置的秒数, 不管当前已执行次数是否达到 <code>--events</code> 的值, 都会停止测试; 反之如果当前已执行次数已达到 <code>--events</code> 设置的值, 不管当前时间是否达到 <code>--time</code> 设置的秒数, 测试也会停止</p>
+</blockquote>
+<p><code>sysbench</code> 自带了几个基本的数据库测试脚本, 都放在 <code>/usr/share/sysbench</code> 目录下. 我们可以通过 <code>sysbench script_name help</code> 的方式查看某个脚本的使用方式. 例如:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">$ sysbench /usr/share/sysbench/oltp_read_only.lua <span class="built_in">help</span></span><br><span class="line"></span><br><span class="line">sysbench 1.0.20 (using system LuaJIT 2.1.0-beta3)</span><br><span class="line"></span><br><span class="line">oltp_read_only.lua options:</span><br><span class="line">  --auto_inc[=on|off]           Use AUTO_INCREMENT column as Primary Key (<span class="keyword">for</span> MySQL), or its alternatives <span class="keyword">in</span> other DBMS. When disabled, use client-generated IDs [on]</span><br><span class="line">  --create_secondary[=on|off]   Create a secondary index <span class="keyword">in</span> addition to the PRIMARY KEY [on]</span><br><span class="line">  --delete_inserts=N            Number of DELETE/INSERT combinations per transaction [1]</span><br><span class="line">  --distinct_ranges=N           Number of SELECT DISTINCT queries per transaction [1]</span><br><span class="line">  --index_updates=N             Number of UPDATE index queris per transaction [1]</span><br><span class="line">  ....</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>不是所有脚本或内置测试都支持 <code>help</code> 命令, 在自定义脚本环节我们会讲述使用帮助是怎样声明的.</p>
+</blockquote>
+<h5 id="自定义测试脚本"><a href="#自定义测试脚本" class="headerlink" title="自定义测试脚本"></a>自定义测试脚本</h5><blockquote>
+<p>完整代码: <a target="_blank" rel="noopener" href="https://gogs.ijunj.com/common/sysbench-tests">https://gogs.ijunj.com/common/sysbench-testsl</a></p>
+</blockquote>
+<p><code>sysbench</code> 只提供了几个基础的测试脚本, 当我们需要对现有数据测试或者需要进行更深层次的测试时, 就需要自定义测试脚本去达到测试的目的; <code>sysbench</code> 的脚本通过 <code>Lua</code> 编写, <code>sysbench</code> 为我们提供了一套相当完整的 <code>API</code>, 只需要参照它提供的基础测试脚本就能快速的上手; 当然这需要你有一定的 <code>Lua</code> 基础</p>
+<p><strong>标准</strong> 测试脚本都要实现三个函数: <code>thread_init</code>、<code>thread_done</code>、<code>event</code>; 其中 <code>thread_init</code> 和 <code>thread_done</code> 是在每个线程中都会被执行一次, 也就是说这两个函数被 <code>--threads</code> 参数的值影响, <code>--threads</code> 值为几, 它们就会被执行几次. <code>thread_init</code> 中一般实现线程初始化的操作, 例如: 连接数据库、<code>SQL</code> 语句拼装、参数绑定等操作; <code>thread_done</code> 则是实现资源释放的函数, 例如: 断开数据库连接等; <code>events</code> 中就是需要测试的主要逻辑实现, 它受 <code>--events</code> 参数值影响, 值为几 <code>event</code> 函数就会被执行几次 (<strong><code>--time</code> 时间充足的情况下</strong>);</p>
+<p>如果你不需要执行 <code>run</code> 命令的话可以不实现上述的三个函数, 例如下面这个例子, 整个脚本只创建和删除测试数据:</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">cmd_prepare</span><span class="params">()</span></span></span><br><span class="line">	<span class="comment">-- initialize the sysbench mysql driver</span></span><br><span class="line">    <span class="keyword">local</span> drv = sysbench.sql.driver()</span><br><span class="line">    <span class="comment">-- represents the connection to MySQL</span></span><br><span class="line">    <span class="keyword">local</span> con = drv:connect()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">local</span> query_str = <span class="string">[[</span></span><br><span class="line"><span class="string">CREATE TABLE `type_test_tb` (</span></span><br><span class="line"><span class="string">  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,</span></span><br><span class="line"><span class="string">  `str` varchar(64) NOT NULL DEFAULT &#x27;&#x27;,</span></span><br><span class="line"><span class="string">  `num` int(11) NOT NULL DEFAULT 0,</span></span><br><span class="line"><span class="string">  PRIMARY KEY (`id`)</span></span><br><span class="line"><span class="string">) ENGINE=innodb DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ROW_FORMAT=DYNAMIC]]</span></span><br><span class="line"></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;Creating table type_test_tb: \n&quot;</span>)</span><br><span class="line">    <span class="built_in">print</span>(query_str)</span><br><span class="line">    <span class="comment">-- Execute the SQL statement to create the test table</span></span><br><span class="line">    con:query(query_str);</span><br><span class="line"></span><br><span class="line">    query_str = <span class="string">&quot;INSERT INTO type_test_tb (str, num) VALUES&quot;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">-- Initialize the batch write channel</span></span><br><span class="line">    con:bulk_insert_init(query_str)</span><br><span class="line">    <span class="keyword">for</span> i = <span class="number">1</span>, <span class="number">10</span> <span class="keyword">do</span></span><br><span class="line">        query_str = <span class="built_in">string</span>.<span class="built_in">format</span>(<span class="string">&quot;(&#x27;%s&#x27;, %d)&quot;</span>,</span><br><span class="line">                <span class="built_in">tostring</span>(sysbench.rand.pareto(<span class="number">1</span>, <span class="number">10</span>)),</span><br><span class="line">                sysbench.rand.pareto(<span class="number">1</span>, <span class="number">10</span>))</span><br><span class="line"></span><br><span class="line">        <span class="comment">-- Write data to the test table one by one</span></span><br><span class="line">        con:bulk_insert_next(query_str)</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">-- Disable the batch write channel</span></span><br><span class="line">    con:bulk_insert_done()</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">cmd_cleanup</span><span class="params">()</span></span></span><br><span class="line">    <span class="keyword">local</span> drv = sysbench.sql.driver()</span><br><span class="line">    <span class="keyword">local</span> con = drv:connect()</span><br><span class="line"></span><br><span class="line">    con:query(<span class="string">&quot;DROP TABLE IF EXISTS type_test_tb&quot;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;Drop table type_test_tb success&quot;</span>)</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="comment">-- Statement custom commands</span></span><br><span class="line">sysbench.cmdline.commands = &#123;</span><br><span class="line">    prepare = &#123; cmd_prepare, sysbench.cmdline.PARALLEL_COMMAND &#125;,</span><br><span class="line">    cleanup = &#123; cmd_cleanup, sysbench.cmdline.PARALLEL_COMMAND &#125;,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>整个示例的主要逻辑是声明了两个命令, <code>prepare</code> 命令创建一张表, 并写入 10 条测试数据; <code>cleanup</code> 命令删除通过 <code>prepare</code> 创建的表; 当执行 <code>sysbench ./test.lua command</code> 时, 对应的函数就会被执行一次. <code>sysbench.rand.pareto(min, max)</code> 是 <code>sysbench</code> 提供的随机数 <code>API</code>. </p>
+<blockquote>
+<p>只有 <code>run</code> 命令才会调用 <code>thread_init</code>、<code>thread_done</code>、<code>event</code> 函数, 自定义只会调用声明命令时设置的函数, 且只会调用一次</p>
+</blockquote>
+<p>上述示例中, 所有的参数都是写死的, 比如我需要指定表的 <strong>存储引擎</strong>; 或者我需要制定表中生成测试数据的条数, 我需要逐条测试 10 条的插入速度、100 条插入速度, 1w 条插入速度. 不能每次都去修改脚本吧, 所有就需要给脚本添加一些它自己的参数. 只需要在脚本中添加:</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">sysbench.cmdline.options = &#123;</span><br><span class="line">    storage_engine = &#123; <span class="string">&quot;Storage engine, if MySQL is used&quot;</span>, <span class="string">&quot;innodb&quot;</span> &#125;,</span><br><span class="line">    table_size = &#123; <span class="string">&quot;Number of rows per table&quot;</span>, <span class="number">100000</span> &#125;,</span><br><span class="line">    column = &#123; <span class="string">&quot;Column of table by query&quot;</span>, <span class="string">&quot;num&quot;</span> &#125;,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>通过 <code>sysbench.cmdline.options</code> 设置脚本参数之后, 就可以通过 <code>sysbench.opt.xxx</code> 的方式获取传递的参数, 例如: <code>sysbench.opt.table_size</code>. 也可以通过 <code>sysbench ./test.lua help</code> 查看使用帮助</p>
+<p>实现 <code>run</code> 命令: </p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">thread_init</span><span class="params">()</span></span></span><br><span class="line">    drv = sysbench.sql.driver()</span><br><span class="line">    con = drv:connect()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">local</span> query_str = <span class="built_in">string</span>.<span class="built_in">format</span>(<span class="string">&quot;select * from type_test_tb &quot;</span> ..</span><br><span class="line">            <span class="string">&quot; where %s = ?&quot;</span>, sysbench.opt.column)</span><br><span class="line">    stmt = con:prepare(query_str)</span><br><span class="line">    <span class="keyword">local</span> <span class="built_in">type</span> = sysbench.opt.column == <span class="string">&#x27;num&#x27;</span> <span class="keyword">and</span> sysbench.sql.<span class="built_in">type</span>.INT <span class="keyword">or</span> sysbench.sql.<span class="built_in">type</span>.VARCHAR</span><br><span class="line"></span><br><span class="line">    params = &#123;stmt:bind_create(<span class="built_in">type</span>, <span class="number">64</span>)&#125;</span><br><span class="line">    stmt:bind_param(<span class="built_in">unpack</span>(params))</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">thread_done</span><span class="params">()</span></span></span><br><span class="line">    stmt:<span class="built_in">close</span>()</span><br><span class="line">    con:disconnect()</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">event</span><span class="params">()</span></span></span><br><span class="line">    <span class="keyword">local</span> num = sysbench.rand.pareto(<span class="number">1</span>, sysbench.opt.table_size)</span><br><span class="line">    num = sysbench.opt.column == <span class="string">&#x27;num&#x27;</span> <span class="keyword">and</span> num <span class="keyword">or</span> <span class="built_in">tostring</span>(num);</span><br><span class="line">    params[<span class="number">1</span>]:set(num)</span><br><span class="line"></span><br><span class="line">    stmt:<span class="built_in">execute</span>()</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+
+<p>在实现 <code>thread_init</code>、<code>thread_done</code>、<code>event</code> 三个命令时, 线程内共用的变量, 需要生命为全局变量, 例如: 数据库连接, 预加载等; 注: 当使用 <strong>预加载</strong> 的方式写入语句时, <code>stmt:bind_create(type, [len])</code> 参数为字符串类似时, 需要设置字符串的长度</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/MySQL/" rel="tag"># MySQL</a>
+              <a href="/tags/MariaDB/" rel="tag"># MariaDB</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/posts/tools-use-records.html" rel="prev" title="工具使用记录">
+      <i class="fa fa-chevron-left"></i> 工具使用记录
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/posts/php-link-tool-v2.html" rel="next" title="MAC 环境下构建 PHP 自动化环境工具 V2.0">
+      MAC 环境下构建 PHP 自动化环境工具 V2.0 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%AE%89%E8%A3%85-sysbench-%E5%92%8C%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95"><span class="nav-number">1.</span> <span class="nav-text">安装 sysbench 和基本使用方法</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%87%AA%E5%AE%9A%E4%B9%89%E6%B5%8B%E8%AF%95%E8%84%9A%E6%9C%AC"><span class="nav-number">2.</span> <span class="nav-text">自定义测试脚本</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Riley</p>
+  <div class="site-description" itemprop="description">A computer rookie blog that records something that he thinks is worthy of being recorded. It may be life, it may be work, or it may be a bug! ! !</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">23</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="mailto:junjiayy@gmail.com" title="E-Mail → mailto:junjiayy@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://github.com/Junjiayy" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Junjiayy" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://lydiadai.github.io/" title="https:&#x2F;&#x2F;lydiadai.github.io&#x2F;" rel="noopener" target="_blank">Lydia blog</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Riley</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '7128ec0004a023b91abd',
+      clientSecret: '867efcae82773ee4dc23433aaf974fef99e70c8c',
+      repo        : 'Junjiayy.github.io',
+      owner       : 'Junjiayy',
+      admin       : ['Junjiayy'],
+      id          : '7859e7a3a92ba2e5206e2c568e9cd795',
+        language: 'zh-CN',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+</body>
+</html>
