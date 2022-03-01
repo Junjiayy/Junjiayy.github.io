@@ -215,12 +215,10 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>前段时间手撸一个 <code>PHP</code> 的本地自动化环境脚本, 跟朋友分享了一波之后收到了绝大多数的好评. 但是在实际使用的过程中还是有不少的问题, 因为刚入职了新公司也没有去升级, 今天刚好有空抽了两个小时升级了一下. </p>
-<p>实际使用中遇到的问题: </p>
-<ul>
-<li>依赖 <code>Mac</code> 自带的 <code>Apache</code>: 本来这个工具就是因为我懒得每次有个啥新项目都需要去重新部署本地环境, 虽然十分钟就能搞定, 但还是懒得搞, 所以本身就是为我自己本机环境定制的. 新公司配的电脑是 <code>Linux</code>, 诶!, 难受了, 就需要移植到 <code>Linux</code> 上</li>
-<li>域名 和 <code>Nginx</code> 中的 <code>root</code> 固定不可配: 本来想是为 <code>Laravel</code> 和 <code>Lumen</code> 定制的工具, 但是实际项目中有 <code>Yii</code> 的项目, 且一个项目可能有多个入口, 每次都只能手动去修改, 很不方便</li>
-</ul>
+          <p>前段时间手撸一个 <code>PHP</code> 的本地自动化环境脚本, 跟朋友分享了一波之后收到了绝大多数的好评. 但是在实际使用的过程中还是有不少的问题, 因为刚入职了新公司也没有时间去升级, 今天刚好有空抽出来两个小时升级一下. </p>
+<p><strong>实际使用中遇到的问题</strong>: </p>
+<p>首先是对 <code>Mac</code> 系统产生依赖, 不能直接移植到 <code>Linux</code> 上; 因为我一直使用的都是 <code>Mac</code>, 它本身自带了 <code>Apache</code>, 当时为了节省时间直接使用 <code>Apache</code> 作为代理服务器, 但是 <code>Linux</code> 本身不会默认安装, 所以这个需要优化. 这个优化上次也提过, 就是通过 <code>docker</code> 拉起一个 <code>nginx</code> 的代理镜像, 通过代理镜像把流量转发到业务容器上.</p>
+<p>第二就是 <strong>域名</strong>、<code>root</code><strong>目录</strong> 等都是固定不可配置的, 但是我在实际开发过程中还有 <code>Yii</code> 的项目, 需要修改 <code>root</code> 指向地址. 之前都是拉起业务容器后, 进入到容器内手动去修改, 很不方便, 这个也需要优化, 改成通过参数的方式传递给脚本.</p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/posts/php-link-tool-v2.html#more" rel="contents">
@@ -261,7 +259,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/posts/db-benchmark-test-tools.html" class="post-title-link" itemprop="url">使用 Sysbench 对数据库进行压力测试</a>
+            <a href="/posts/db-benchmark-test-tools.html" class="post-title-link" itemprop="url">使用 Sysbench 对数据库进行性能测试</a>
         </h2>
 
         <div class="post-meta">
